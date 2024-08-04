@@ -1,5 +1,6 @@
 package com.biding.auction.config;
 
+import com.biding.auction.constants.WebSocketConstants;
 import com.biding.auction.dao.User;
 import com.biding.auction.repository.UsersRepository;
 import org.mindrot.jbcrypt.BCrypt;
@@ -24,24 +25,21 @@ public class WebSocketAuthInterceptor implements HandshakeInterceptor {
     private UsersRepository usersRepository;
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        if (request.getHeaders().get("Authorization") == null || request.getHeaders().get("Authorization").size() == 0) {
+        if (request.getHeaders().get(WebSocketConstants.AUTHORIZATION) == null || request.getHeaders().get(WebSocketConstants.AUTHORIZATION).size() == 0) {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return false;
         }
-        String authHeader = request.getHeaders().get("Authorization").get(0).toString();
+        String authHeader = Objects.requireNonNull(request.getHeaders().get(WebSocketConstants.AUTHORIZATION)).get(0);
 
-        // Verify the authentication information
-        if (authHeader == null || !authHeader.startsWith("Basic ")) {
+        if (!authHeader.startsWith(WebSocketConstants.CHECK_BASIC_AUTH)) {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return false;
         }
 
-        // Decode the basic auth credentials
         String[] credentials = new String(Base64.getDecoder().decode(authHeader.substring(6))).split(":");
         String email = credentials[0];
         User user = usersRepository.findByEmail(email);
 
-        // Verify the credentials
         if (Objects.isNull(user) || !BCrypt.checkpw(credentials[1], user.getPassword())) {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return false;
