@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -152,21 +153,16 @@ public class VendorServiceImpl implements VendorService {
     private PaginationResponse<Object> findByOptions(PaginationRequest paginationRequest) throws Exception {
         Page<Vendors> page;
         try {
-            if (paginationRequest.getSort().startsWith("a")) {
+
+            Pageable pageable = PageRequest.of(paginationRequest.getOffset() - 1, paginationRequest.getPageSize(),
+                    paginationRequest.getSort().toLowerCase().startsWith("a")
+                            ? Sort.by(paginationRequest.getField()).ascending()
+                            : Sort.by(paginationRequest.getField()).descending());
                 page = vendorRepository.findByOptions(
-                        PageRequest.of(paginationRequest.getOffset() - 1, paginationRequest.getPageSize())
-                                .withSort(Sort.by(paginationRequest.getField()).ascending()),
+                        pageable,
                         paginationRequest.getName(),
                         paginationRequest.getContact(),
                         paginationRequest.getEmail());
-            } else {
-                page = vendorRepository.findByOptions(
-                        PageRequest.of(paginationRequest.getOffset() - 1, paginationRequest.getPageSize())
-                                .withSort(Sort.by(paginationRequest.getField()).descending()),
-                        paginationRequest.getName(),
-                        paginationRequest.getContact(),
-                        paginationRequest.getEmail());
-            }
 
             if (!page.isEmpty()) {
                 log.debug("Found {} vendors with the given criteria", page.getTotalElements());

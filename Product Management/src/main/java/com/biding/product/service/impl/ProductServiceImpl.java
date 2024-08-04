@@ -19,6 +19,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -124,7 +125,7 @@ public class ProductServiceImpl implements ProductsService {
     }
 
     private APIResponse<Object> createResponse(Object content, HttpStatus status) {
-        if (status.value() > 399) {
+        if (status.is4xxClientError() || status.is5xxServerError()) {
             if (content instanceof String) {
                 throw new ResponseStatusException(status, (String) content);
             } else {
@@ -164,26 +165,18 @@ public class ProductServiceImpl implements ProductsService {
         log.info("Fetching products with filters and pagination: {}", paginationRequest);
 
         try {
-            Page<Products> page;
-            if (paginationRequest.getSort().startsWith("a")) {
-                page = productsRepository.findByFilters(
-                        PageRequest.of(paginationRequest.getOffset() - 1, paginationRequest.getPageSize())
-                                .withSort(Sort.by(paginationRequest.getField()).ascending()),
+            Pageable pageable = PageRequest.of(paginationRequest.getOffset() - 1, paginationRequest.getPageSize(),
+                    paginationRequest.getSort().toLowerCase().startsWith("a")
+                            ? Sort.by(paginationRequest.getField()).ascending()
+                            : Sort.by(paginationRequest.getField()).descending());
+
+            Page<Products> page = productsRepository.findByFilters(
+                        pageable,
                         paginationRequest.getName(),
                         paginationRequest.getDescription(),
                         paginationRequest.getBasePriceMin(),
                         paginationRequest.getBasePriceMax(),
                         paginationRequest.getVendorId());
-            } else {
-                page = productsRepository.findByFilters(
-                        PageRequest.of(paginationRequest.getOffset() - 1, paginationRequest.getPageSize())
-                                .withSort(Sort.by(paginationRequest.getField()).descending()),
-                        paginationRequest.getName(),
-                        paginationRequest.getDescription(),
-                        paginationRequest.getBasePriceMin(),
-                        paginationRequest.getBasePriceMax(),
-                        paginationRequest.getVendorId());
-            }
 
             if (!page.isEmpty()) {
                 log.debug("Found {} products with the given criteria", page.getTotalElements());
