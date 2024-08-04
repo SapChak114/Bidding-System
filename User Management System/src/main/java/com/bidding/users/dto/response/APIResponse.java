@@ -9,6 +9,5 @@ import lombok.Setter;
 @Builder(builderClassName = "builder")
 public class APIResponse<T> {
     private T response;
-    private String status;
     private int statusCode;
 }

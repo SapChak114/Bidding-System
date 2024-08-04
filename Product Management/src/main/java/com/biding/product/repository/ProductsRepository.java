@@ -1,6 +1,6 @@
 package com.biding.product.repository;
 
-import com.biding.product.dao.Products;
+import com.biding.product.dao.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProductsRepository extends JpaRepository<Products, Long> {
+public interface ProductsRepository extends JpaRepository<Product, Long> {
 
 
     @Query(value = "SELECT * FROM products p " +
@@ -19,11 +19,11 @@ public interface ProductsRepository extends JpaRepository<Products, Long> {
             "AND (:basePriceMax IS NULL OR p.base_price <= :basePriceMax) " +
             "AND (:vendorId IS NULL OR p.vendor_id = :vendorId)",
             nativeQuery = true)
-    Page<Products> findByFilters(Pageable pageable,
-                                 @Param("name") String name,
-                                 @Param("description") String description,
-                                 @Param("basePriceMin") Double basePriceMin,
-                                 @Param("basePriceMax") Double basePriceMax,
-                                 @Param("vendorId") Long vendorId);
+    Page<Product> findByFilters(Pageable pageable,
+                                @Param("name") String name,
+                                @Param("description") String description,
+                                @Param("basePriceMin") Double basePriceMin,
+                                @Param("basePriceMax") Double basePriceMax,
+                                @Param("vendorId") Long vendorId);
 
 }

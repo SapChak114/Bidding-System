@@ -16,7 +16,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Vendors {
+public class Vendor {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;

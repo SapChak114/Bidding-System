@@ -1,6 +1,7 @@
 package com.bidding.users.service.impl;
 
-import com.bidding.users.dao.Users;
+import ch.qos.logback.core.util.StringUtil;
+import com.bidding.users.dao.User;
 import com.bidding.users.dto.request.PaginationRequest;
 import com.bidding.users.dto.request.UserRequestDto;
 import com.bidding.users.dto.response.APIResponse;
@@ -10,6 +11,7 @@ import com.bidding.users.repository.UsersRepository;
 import com.bidding.users.service.UsersService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,7 +42,12 @@ public class UserServiceImpl implements UsersService {
     public APIResponse<Object> createUser(UserRequestDto userRequestDto) {
         try {
             log.info("Starting user creation process for email: {}", userRequestDto.getEmail());
-            Users user = mapper.convertValue(userRequestDto, Users.class);
+            User user = mapper.convertValue(userRequestDto, User.class);
+            if (StringUtil.notNullNorEmpty(userRequestDto.getPassword())) {
+                user.setPassword(BCrypt.hashpw(userRequestDto.getPassword(), BCrypt.gensalt()));
+            } else {
+                return createResponse("Bad Request Password Cannot Be Empty", HttpStatus.BAD_REQUEST);
+            }
             user = usersRepository.save(user);
             log.info("User created successfully with ID: {}", user.getId());
             return createResponse(mapper.convertValue(user, UserResponseDto.class), HttpStatus.CREATED);
@@ -55,11 +62,13 @@ public class UserServiceImpl implements UsersService {
     public APIResponse<Object> updateUser(Long id, UserRequestDto userRequestDto) {
         try {
             log.info("Starting user update process for ID: {}", id);
-            Users user = usersRepository.findById(id)
+            User user = usersRepository.findById(id)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-            // Update fields with new values
             mapper.updateValue(user, userRequestDto);
+            if (StringUtil.notNullNorEmpty(userRequestDto.getPassword())) {
+                user.setPassword(BCrypt.hashpw(userRequestDto.getPassword(), BCrypt.gensalt()));
+            }
             user = usersRepository.save(user);
 
             log.info("User updated successfully with ID: {}", user.getId());
@@ -76,7 +85,7 @@ public class UserServiceImpl implements UsersService {
     public APIResponse<Object> getUserById(Long id) {
         try {
             log.info("Fetching user with ID: {}", id);
-            Users user = usersRepository.findById(id)
+            User user = usersRepository.findById(id)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
             return createResponse(mapper.convertValue(user, UserResponseDto.class), HttpStatus.OK);
@@ -92,7 +101,7 @@ public class UserServiceImpl implements UsersService {
     public APIResponse<Object> getByEmail(String email) {
         log.info("Fetching user by email: {}", email);
         try {
-            Users user = usersRepository.findByEmail(email)
+            User user = usersRepository.findByEmail(email)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
             UserResponseDto userResponseDto = mapper.convertValue(user, UserResponseDto.class);
@@ -120,7 +129,7 @@ public class UserServiceImpl implements UsersService {
                             ? Sort.by(paginationRequest.getField()).ascending()
                             : Sort.by(paginationRequest.getField()).descending());
 
-            Page<Users> page = usersRepository.findByOptions(pageable,
+            Page<User> page = usersRepository.findByOptions(pageable,
                     paginationRequest.getName(),
                     paginationRequest.getEmail(),
                     paginationRequest.getContact());
@@ -150,7 +159,7 @@ public class UserServiceImpl implements UsersService {
     public APIResponse<Object> deleteUser(Long id) {
         try {
             log.info("Starting user deletion process for ID: {}", id);
-            Users user = usersRepository.findById(id)
+            User user = usersRepository.findById(id)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
             usersRepository.delete(user);

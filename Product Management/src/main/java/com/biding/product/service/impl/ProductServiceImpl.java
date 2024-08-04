@@ -1,8 +1,8 @@
 package com.biding.product.service.impl;
 
 import ch.qos.logback.core.util.StringUtil;
-import com.biding.product.dao.Products;
-import com.biding.product.dao.Vendors;
+import com.biding.product.dao.Product;
+import com.biding.product.dao.Vendor;
 import com.biding.product.dto.request.PaginationRequest;
 import com.biding.product.dto.request.ProductsRequestDto;
 import com.biding.product.dto.response.APIResponse;
@@ -52,20 +52,20 @@ public class ProductServiceImpl implements ProductsService {
         log.info("Starting createProduct process with request: {}", productsRequestDto);
 
         try {
-            Products products = mapper.convertValue(productsRequestDto, Products.class);
-            log.debug("Converted DTO to Entity: {}", products);
+            Product product = mapper.convertValue(productsRequestDto, Product.class);
+            log.debug("Converted DTO to Entity: {}", product);
 
-            Vendors vendors = vendorsRepository.findById(productsRequestDto.getVendorId())
+            Vendor vendor = vendorsRepository.findById(productsRequestDto.getVendorId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendor not found"));
-            log.debug("Found Vendor: {}", vendors);
+            log.debug("Found Vendor: {}", vendor);
 
-            products.setVendors(vendors);
+            product.setVendor(vendor);
 
-            products = productsRepository.save(products);
-            log.debug("Saved Product: {}", products);
+            product = productsRepository.save(product);
+            log.debug("Saved Product: {}", product);
 
-            ProductsResponseDto productsResponseDto = mapper.convertValue(products, ProductsResponseDto.class);
-            log.info("Product created successfully with ID: {}", products.getId());
+            ProductsResponseDto productsResponseDto = mapper.convertValue(product, ProductsResponseDto.class);
+            log.info("Product created successfully with ID: {}", product.getId());
 
             return createResponse(productsResponseDto, HttpStatus.CREATED);
 
@@ -89,7 +89,7 @@ public class ProductServiceImpl implements ProductsService {
     public APIResponse<Object> updateProduct(Long id, ProductsRequestDto productsRequestDto) {
         log.info("Starting update process for product with id: {}", id);
 
-        Products existingProduct;
+        Product existingProduct;
         try {
             existingProduct = productsRepository.findById(id)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
@@ -109,7 +109,7 @@ public class ProductServiceImpl implements ProductsService {
                 existingProduct.setBasePrice(productsRequestDto.getBasePrice());
             }
 
-            Products updatedProduct = productsRepository.save(existingProduct);
+            Product updatedProduct = productsRepository.save(existingProduct);
             ProductsResponseDto productsResponseDto = mapper.convertValue(updatedProduct, ProductsResponseDto.class);
 
             log.info("Successfully updated product with id: {}", id);
@@ -143,7 +143,7 @@ public class ProductServiceImpl implements ProductsService {
         log.info("Fetching product with id: {}", id);
 
         try {
-            Products product = productsRepository.findById(id)
+            Product product = productsRepository.findById(id)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
 
             ProductsResponseDto productResponseDto = mapper.convertValue(product, ProductsResponseDto.class);
@@ -170,7 +170,7 @@ public class ProductServiceImpl implements ProductsService {
                             ? Sort.by(paginationRequest.getField()).ascending()
                             : Sort.by(paginationRequest.getField()).descending());
 
-            Page<Products> page = productsRepository.findByFilters(
+            Page<Product> page = productsRepository.findByFilters(
                         pageable,
                         paginationRequest.getName(),
                         paginationRequest.getDescription(),
@@ -203,7 +203,7 @@ public class ProductServiceImpl implements ProductsService {
         }
     }
 
-    private List<ProductsResponseDto> mapperConvert(Page<Products> page) {
+    private List<ProductsResponseDto> mapperConvert(Page<Product> page) {
         // Convert Products entities to ProductsResponseDto
         return page.getContent().stream()
                 .map(product -> mapper.convertValue(product, ProductsResponseDto.class))
@@ -215,7 +215,7 @@ public class ProductServiceImpl implements ProductsService {
         log.info("Attempting to delete product with id: {}", id);
 
         try {
-            Products product = productsRepository.findById(id)
+            Product product = productsRepository.findById(id)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
 
             productsRepository.delete(product);

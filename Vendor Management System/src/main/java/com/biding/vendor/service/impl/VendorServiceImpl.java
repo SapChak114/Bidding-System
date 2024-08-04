@@ -1,7 +1,7 @@
 package com.biding.vendor.service.impl;
 
 import ch.qos.logback.core.util.StringUtil;
-import com.biding.vendor.dao.Vendors;
+import com.biding.vendor.dao.Vendor;
 import com.biding.vendor.dtos.responseDtos.APIResponseDto;
 import com.biding.vendor.dtos.requestDtos.PaginationRequest;
 import com.biding.vendor.dtos.requestDtos.VendorRegistrationRequest;
@@ -45,7 +45,7 @@ public class VendorServiceImpl implements VendorService {
     public APIResponseDto<Object> createVendor(VendorRegistrationRequest vendorRegistrationRequest) {
         log.info("Starting create vendor process for email: {}", vendorRegistrationRequest.getEmail());
         try {
-            Vendors vendor = mapper.convertValue(vendorRegistrationRequest, Vendors.class);
+            Vendor vendor = mapper.convertValue(vendorRegistrationRequest, Vendor.class);
             if (StringUtil.notNullNorEmpty(vendorRegistrationRequest.getPassword())) {
                 vendor.setPassword(BCrypt.hashpw(vendorRegistrationRequest.getPassword(), BCrypt.gensalt()));
             } else {
@@ -75,7 +75,7 @@ public class VendorServiceImpl implements VendorService {
     @Transactional
     public APIResponseDto<Object> updateVendor(Integer id, VendorRegistrationRequest vendorRegistrationRequest) {
         log.info("Starting update vendor process for id: {}", id);
-        Vendors vendor = vendorRepository.findById(id)
+        Vendor vendor = vendorRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendor not found"));
 
         if (StringUtil.notNullNorEmpty(vendorRegistrationRequest.getName())) {
@@ -106,7 +106,7 @@ public class VendorServiceImpl implements VendorService {
     public APIResponseDto<Object> getVendorByEmail(String email) {
         log.info("Fetching vendor details for email: {}", email);
         try {
-            Vendors vendor = vendorRepository.findByEmail(email);
+            Vendor vendor = vendorRepository.findByEmail(email);
             if (!Objects.isNull(vendor)) {
                 log.info("Vendor found for email: {}", email);
                 return APIResponseDto
@@ -151,7 +151,7 @@ public class VendorServiceImpl implements VendorService {
     }
 
     private PaginationResponse<Object> findByOptions(PaginationRequest paginationRequest) throws Exception {
-        Page<Vendors> page;
+        Page<Vendor> page;
         try {
 
             Pageable pageable = PageRequest.of(paginationRequest.getOffset() - 1, paginationRequest.getPageSize(),
@@ -189,7 +189,7 @@ public class VendorServiceImpl implements VendorService {
         }
     }
 
-    private List<VendorRegistrationResponse> mapperConvert(Page<Vendors> page) {
+    private List<VendorRegistrationResponse> mapperConvert(Page<Vendor> page) {
         return mapper.convertValue(page.getContent(), mapper.getTypeFactory().constructCollectionType(List.class, VendorRegistrationResponse.class));
     }
 
