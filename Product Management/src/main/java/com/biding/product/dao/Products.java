@@ -5,10 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
-
-import static jakarta.persistence.GenerationType.IDENTITY;
-
 @Entity
 @Getter
 @Setter
@@ -26,9 +22,4 @@ public class Products extends BaseModel {
     @Column(nullable = false)
     private Double basePrice;
 
-    @Column(nullable = false)
-    private Date biddingStartTime;
-
-    @Column(nullable = false)
-    private Date biddingEndTime;
 }

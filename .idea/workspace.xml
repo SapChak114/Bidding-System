@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="164bafc5-0987-459e-8120-ee4492e6635c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/controller/ProductsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/controller/ProductsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/dao/Products.java" beforeDir="false" afterPath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/dao/Products.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/dto/request/PaginationRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/dto/request/PaginationRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/dto/request/ProductsRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/dto/request/ProductsRequestDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/repository/ProductsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/repository/ProductsRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/repository/VendorsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/repository/VendorsRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/service/ProductsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/service/ProductsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/service/impl/ProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/service/impl/ProductServiceImpl.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="2kBb2CXEtAMzyzEFmZ1Xqa0WKaw" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/saptarshichakraborty/Documents/IntelliJ/Bidding System",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="Spring Boot.ProductManagementApplication">
+    <configuration name="ProductManagementApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="product" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.biding.product.ProductManagementApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserManagementSystemApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="users" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.bidding.users.UserManagementSystemApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="VendorManagementSystemApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="vendor" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.biding.vendor.VendorManagementSystemApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="164bafc5-0987-459e-8120-ee4492e6635c" name="Changes" comment="" />
+      <created>1722759707741</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1722759707741</updated>
+      <workItem from="1722759708866" duration="72000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

@@ -1,12 +1,14 @@
-package com.biding.product.dto.request;
+package com.biding.product.dto.response;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 @Getter
 @Setter
-public class ProductsRequestDto {
+@Builder(builderClassName = "builder")
+public class ProductsResponseDto {
+    private Long id;
 
     private String name;
 

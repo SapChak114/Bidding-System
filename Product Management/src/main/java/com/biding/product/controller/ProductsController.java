@@ -1,5 +1,6 @@
 package com.biding.product.controller;
 
+import com.biding.product.dto.request.PaginationRequest;
 import com.biding.product.dto.request.ProductsRequestDto;
 import com.biding.product.dto.response.APIResponse;
 import com.biding.product.service.ProductsService;
@@ -25,12 +26,12 @@ public class ProductsController {
     }
 
     @PutMapping("/{id}")
-    public APIResponse<Object> updateProduct(@PathVariable Integer id, @RequestBody ProductsRequestDto productsRequestDto) {
+    public APIResponse<Object> updateProduct(@PathVariable("id") Long id, @RequestBody ProductsRequestDto productsRequestDto) {
         return productsService.updateProduct(id, productsRequestDto);
     }
 
     @GetMapping("/{id}")
-    public APIResponse<Object> getProductById(@PathVariable Integer id) {
+    public APIResponse<Object> getProductById(@PathVariable("id") Long id) {
         return productsService.getProductById(id);
     }
 
@@ -40,9 +41,27 @@ public class ProductsController {
                             @PathVariable("pageSize") int pageSize,
                             @PathVariable("field") String field,
                             @PathVariable("sort") String sort,
-                            @RequestParam("name") String name,
-                            @RequestParam("description") String description,
-                            @RequestParam("basePrice") Double basePrice) {
+                            @RequestParam(value = "name", required = false) String name,
+                            @RequestParam(value = "description", required = false) String description,
+                            @RequestParam(value = "basePriceMin", required = false) Double basePriceMin,
+                            @RequestParam(value = "basePriceMax", required = false) Double basePriceMax,
+                            @RequestParam(value = "vendorId", required = false) Long vendorId) {
+        return productsService.getAllProductsByFiltersAndPagination(PaginationRequest
+                        .builder()
+                        .offset(offSet)
+                        .pageSize(pageSize)
+                        .field(field)
+                        .sort(sort)
+                        .name(name)
+                        .description(description)
+                        .vendorId(vendorId)
+                        .basePriceMin(basePriceMin)
+                        .basePriceMax(basePriceMax)
+                        .build());
+    }
 
+    @DeleteMapping("/{id}")
+    public APIResponse<Object> deleteProduct(@PathVariable("id") Long id) {
+        return productsService.deleteProductById(id);
     }
 }
