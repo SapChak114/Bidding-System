@@ -12,8 +12,12 @@ import static com.biding.auction.constants.SQSConstants.SQS_QUEUE_NAME;
 @Component
 public class MyWebSocketHandler extends TextWebSocketHandler {
 
+    private final SqsTemplate sqsTemplate;
+
     @Autowired
-    private SqsTemplate sqsTemplate;
+    public MyWebSocketHandler(SqsTemplate sqsTemplate) {
+        this.sqsTemplate = sqsTemplate;
+    }
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {

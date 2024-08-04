@@ -10,11 +10,15 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    @Autowired
-    private MyWebSocketHandler myWebSocketHandler;
+    private final MyWebSocketHandler myWebSocketHandler;
+
+    private final WebSocketAuthInterceptor webSocketAuthInterceptor;
 
     @Autowired
-    private WebSocketAuthInterceptor webSocketAuthInterceptor;
+    public WebSocketConfig(MyWebSocketHandler myWebSocketHandler, WebSocketAuthInterceptor webSocketAuthInterceptor) {
+        this.myWebSocketHandler = myWebSocketHandler;
+        this.webSocketAuthInterceptor = webSocketAuthInterceptor;
+    }
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(myWebSocketHandler, "/websocket").addInterceptors(webSocketAuthInterceptor).setAllowedOrigins("*");

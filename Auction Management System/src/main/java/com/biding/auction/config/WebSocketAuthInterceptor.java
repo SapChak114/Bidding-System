@@ -21,8 +21,12 @@ import java.util.Objects;
 @Order(1)
 public class WebSocketAuthInterceptor implements HandshakeInterceptor {
 
+    private final UsersRepository usersRepository;
+
     @Autowired
-    private UsersRepository usersRepository;
+    public WebSocketAuthInterceptor(UsersRepository usersRepository) {
+        this.usersRepository = usersRepository;
+    }
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         if (request.getHeaders().get(WebSocketConstants.AUTHORIZATION) == null || request.getHeaders().get(WebSocketConstants.AUTHORIZATION).size() == 0) {
