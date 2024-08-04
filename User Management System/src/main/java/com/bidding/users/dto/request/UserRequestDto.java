@@ -1,6 +1,5 @@
-package com.biding.vendor.dtos.requestDtos;
+package com.bidding.users.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -9,8 +8,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class VendorRegistrationRequest {
+public class UserRequestDto {
+
     @NotBlank(message = "Name cannot be blank")
     private String name;
 

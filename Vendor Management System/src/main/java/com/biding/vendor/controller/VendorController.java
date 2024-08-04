@@ -5,6 +5,7 @@ import com.biding.vendor.dtos.requestDtos.PaginationRequest;
 import com.biding.vendor.dtos.requestDtos.VendorRegistrationRequest;
 import com.biding.vendor.service.VendorService;
 import com.biding.vendor.service.impl.VendorServiceImpl;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,12 +25,12 @@ public class VendorController {
 
 
     @PostMapping("/")
-    public APIResponseDto<Object> createVendor(@RequestBody VendorRegistrationRequest vendorRegistrationRequest) {
+    public APIResponseDto<Object> createVendor(@RequestBody @Valid VendorRegistrationRequest vendorRegistrationRequest) {
         return vendorService.createVendor(vendorRegistrationRequest);
     }
 
     @PutMapping("/{id}")
-    public APIResponseDto<Object> updateVendor(@PathVariable("id") Integer id, @RequestBody VendorRegistrationRequest vendorRegistrationRequest) {
+    public APIResponseDto<Object> updateVendor(@PathVariable("id") Integer id, @RequestBody @Valid VendorRegistrationRequest vendorRegistrationRequest) {
         return vendorService.updateVendor(id, vendorRegistrationRequest);
     }
 
