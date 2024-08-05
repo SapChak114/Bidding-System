@@ -31,18 +31,18 @@ public class SchedulerControllerTest {
         schedulerController.findWinner();
 
         // Verify that determineAuctionWinners was called once
-        verify(bidingService, times(1)).determineAuctionWinners();
+        verify(bidingService, times(1)).determineAuctionWinner();
     }
 
     @Test
     void testFindWinnerException() {
         // Simulate an exception in determineAuctionWinners
-        doThrow(new RuntimeException("Test Exception")).when(bidingService).determineAuctionWinners();
+        doThrow(new RuntimeException("Test Exception")).when(bidingService).determineAuctionWinner();
 
         // Trigger the method manually
         schedulerController.findWinner();
 
         // Verify that determineAuctionWinners was called once
-        verify(bidingService, times(1)).determineAuctionWinners();
+        verify(bidingService, times(1)).determineAuctionWinner();
     }
 }

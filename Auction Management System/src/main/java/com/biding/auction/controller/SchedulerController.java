@@ -18,11 +18,11 @@ public class SchedulerController {
         this.bidingService = bidingService;
     }
 
-    @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)  //TODO : As of now 1 hour interval is scheduled
+    @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)  //TODO : As of now 1 hour interval is scheduled
     public void findWinner() {
         log.info("Starting winner determination process");
         try {
-            bidingService.determineAuctionWinners();
+            bidingService.determineAuctionWinner();
         } catch (Exception e) {
             log.error("Error during winner determination process: {}", e.getMessage(), e);
         }

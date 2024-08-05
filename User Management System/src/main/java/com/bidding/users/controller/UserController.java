@@ -35,19 +35,19 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<APIResponse<Object>> getUserById(@PathVariable("id") Long id) {
+    public ResponseEntity<APIResponse<Object>> getUserById(@PathVariable("id") Long id) {
         APIResponse<Object> resp = usersService.getUserById(id);
         return new ResponseEntity<>(resp, HttpStatusCode.valueOf(resp.getStatusCode()));
     }
 
     @GetMapping("/{email}")
-    private ResponseEntity<APIResponse<Object>> getByEmail(@PathVariable("email") String email) {
+    public ResponseEntity<APIResponse<Object>> getByEmail(@PathVariable("email") String email) {
         APIResponse<Object> resp = usersService.getByEmail(email);
         return new ResponseEntity<>(resp, HttpStatusCode.valueOf(resp.getStatusCode()));
     }
 
     @GetMapping("/{offSet}/{pageSize}/{field}/{sort}")
-    private ResponseEntity<APIResponse<Object>> getUsersByFilters(
+    public ResponseEntity<APIResponse<Object>> getUsersByFilters(
                         @PathVariable("offSet") int offSet,
                         @PathVariable("pageSize") int pageSize,
                         @PathVariable("field") String field,
@@ -68,7 +68,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<APIResponse<Object>> deleteUsers(@PathVariable("id") Long id) {
+    public ResponseEntity<APIResponse<Object>> deleteUsers(@PathVariable("id") Long id) {
         APIResponse<Object> resp = usersService.deleteUser(id);
         return new ResponseEntity<>(resp, HttpStatusCode.valueOf(resp.getStatusCode()));
     }

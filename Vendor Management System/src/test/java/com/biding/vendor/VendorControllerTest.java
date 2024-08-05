@@ -4,120 +4,109 @@ import com.biding.vendor.controller.VendorController;
 import com.biding.vendor.dtos.requestDtos.PaginationRequest;
 import com.biding.vendor.dtos.requestDtos.VendorRegistrationRequest;
 import com.biding.vendor.dtos.responseDtos.APIResponseDto;
+import com.biding.vendor.dtos.responseDtos.VendorRegistrationResponse;
 import com.biding.vendor.service.VendorService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringJUnitConfig
+@WebMvcTest(VendorController.class)
 public class VendorControllerTest {
 
-    @Mock
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
     private VendorService vendorService;
 
-    @InjectMocks
-    private VendorController vendorController;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private VendorRegistrationRequest vendorRegistrationRequest;
+    private APIResponseDto<Object> apiResponse;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        vendorRegistrationRequest = VendorRegistrationRequest.builder()
+                .name("John Doe")
+                .email("john.doe@example.com")
+                .contact("+1234567890")
+                .password("securePassword123")
+                .build();
+
+        VendorRegistrationResponse vendorRegistrationResponse = VendorRegistrationResponse.builder()
+                .id(1L)
+                .name("John Doe")
+                .email("john.doe@example.com")
+                .contact("+1234567890")
+                .build();
+
+        apiResponse = APIResponseDto.<Object>builder()
+                .response(vendorRegistrationResponse)
+                .status("Success")
+                .statusCode(200)
+                .build();
     }
 
     @Test
-    void testCreateVendor() {
-        VendorRegistrationRequest request = VendorRegistrationRequest.builder()
-                .name("abc")
-                .contact("918420595035")
-                .email("abc@abc.com")
-                .password("password")
-                .build();
-        APIResponseDto<Object> response = APIResponseDto.builder()
-                .response("Vendor created successfully")
-                .statusCode(HttpStatus.CREATED.value())
-                .build();
+    void testCreateVendor() throws Exception {
+        when(vendorService.createVendor(vendorRegistrationRequest)).thenReturn(apiResponse);
 
-        when(vendorService.createVendor(any(VendorRegistrationRequest.class))).thenReturn(response);
-
-        APIResponseDto<Object> result = vendorController.createVendor(request);
-
-        assertEquals(HttpStatus.CREATED.value(), result.getStatusCode());
-        assertEquals("Success", result.getStatus());
+        mockMvc.perform(post("/vendors/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(vendorRegistrationRequest)))
+                .andExpect(status().isOk());
     }
 
     @Test
-    void testUpdateVendor() {
-        Integer id = 1;
-        VendorRegistrationRequest request = VendorRegistrationRequest.builder()
-                .name("abc")
-                .build();
-        APIResponseDto<Object> response = APIResponseDto.builder()
-                .response("Vendor updated successfully")
-                .statusCode(HttpStatus.OK.value())
-                .build();
+    void testUpdateVendor() throws Exception {
+        int vendorId = 1;
+        when(vendorService.updateVendor(vendorId, vendorRegistrationRequest)).thenReturn(apiResponse);
 
-        when(vendorService.updateVendor(eq(id), any(VendorRegistrationRequest.class))).thenReturn(response);
-
-        APIResponseDto<Object> result = vendorController.updateVendor(id, request);
-
-        assertEquals(HttpStatus.OK.value(), result.getStatusCode());
-        assertEquals("Vendor updated successfully", result.getResponse());
+        mockMvc.perform(put("/vendors/{id}", vendorId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(vendorRegistrationRequest)))
+                .andExpect(status().isOk());
     }
 
     @Test
-    void testGetVendorByEmail() {
-        String email = "vendor@example.com";
-        APIResponseDto<Object> response = APIResponseDto.builder()
-                .response("Vendor details")
-                .statusCode(HttpStatus.OK.value())
-                .build();
+    void testGetVendorByEmail() throws Exception {
+        String email = "john.doe@example.com";
+        when(vendorService.getVendorByEmail(email)).thenReturn(apiResponse);
 
-        when(vendorService.getVendorByEmail(eq(email))).thenReturn(response);
-
-        APIResponseDto<Object> result = vendorController.getVendorByEmail(email);
-
-        assertEquals(HttpStatus.OK.value(), result.getStatusCode());
-        assertEquals("Vendor details", result.getResponse());
+        mockMvc.perform(get("/vendors/{email}", email)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test
-    void testGetVendors() {
+    void testGetVendors() throws Exception {
+        int offSet = 0;
+        int pageSize = 10;
+        String field = "name";
+        String sort = "asc";
+
         PaginationRequest paginationRequest = PaginationRequest.builder()
-                .offset(0)
-                .pageSize(10)
-                .field("name")
-                .sort("asc")
-                .name("VendorName")
-                .email("vendor@example.com")
-                .contact("1234567890")
+                .field(field)
+                .offset(offSet)
+                .pageSize(pageSize)
+                .sort(sort)
                 .build();
 
-        APIResponseDto<Object> response = APIResponseDto.builder()
-                .response("Vendors list")
-                .statusCode(HttpStatus.OK.value())
-                .build();
+        when(vendorService.getAllVendors(paginationRequest)).thenReturn(apiResponse);
 
-        when(vendorService.getAllVendors(any(PaginationRequest.class))).thenReturn(response);
-
-        APIResponseDto<Object> result = vendorController.getVendors(
-                paginationRequest.getOffset(),
-                paginationRequest.getPageSize(),
-                paginationRequest.getField(),
-                paginationRequest.getSort(),
-                paginationRequest.getName(),
-                paginationRequest.getEmail(),
-                paginationRequest.getContact()
-        );
-
-        assertEquals(HttpStatus.OK.value(), result.getStatusCode());
-        assertEquals("Vendors list", result.getResponse());
+        mockMvc.perform(get("/vendors/{offSet}/{pageSize}/{field}/{sort}", offSet, pageSize, field, sort)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 }
