@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface VendorRepository extends JpaRepository<Vendor, Integer> {
+public interface VendorRepository extends JpaRepository<Vendor, Long> {
 
     @Query("SELECT v FROM Vendor v WHERE " +
             "(:name IS NULL OR v.name=:name) AND" +

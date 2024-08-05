@@ -2,6 +2,7 @@ package com.biding.vendor.controller;
 
 import com.biding.vendor.dtos.requestDtos.PaginationRequest;
 import com.biding.vendor.dtos.requestDtos.VendorRegistrationRequest;
+import com.biding.vendor.dtos.requestDtos.VendorUpdateRequest;
 import com.biding.vendor.dtos.responseDtos.APIResponseDto;
 import com.biding.vendor.service.VendorService;
 import jakarta.validation.Valid;
@@ -29,7 +30,7 @@ public class VendorController {
     }
 
     @PutMapping("/{id}")
-    public APIResponseDto<Object> updateVendor(@PathVariable("id") Integer id, @RequestBody @Valid VendorRegistrationRequest vendorRegistrationRequest) {
+    public APIResponseDto<Object> updateVendor(@PathVariable("id") Long id, @RequestBody @Valid VendorUpdateRequest vendorRegistrationRequest) {
         return vendorService.updateVendor(id, vendorRegistrationRequest);
     }
 
@@ -56,6 +57,11 @@ public class VendorController {
                         .email(email)
                         .contact(contact)
                         .build());
+    }
+
+    @DeleteMapping("/{id}")
+    public APIResponseDto<Object> deleteVendorById(@PathVariable("id") Long id) {
+        return vendorService.deleteById(id);
     }
 
 }

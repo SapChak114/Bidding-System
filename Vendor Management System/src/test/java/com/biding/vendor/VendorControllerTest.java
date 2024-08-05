@@ -3,6 +3,7 @@ package com.biding.vendor;
 import com.biding.vendor.controller.VendorController;
 import com.biding.vendor.dtos.requestDtos.PaginationRequest;
 import com.biding.vendor.dtos.requestDtos.VendorRegistrationRequest;
+import com.biding.vendor.dtos.requestDtos.VendorUpdateRequest;
 import com.biding.vendor.dtos.responseDtos.APIResponseDto;
 import com.biding.vendor.dtos.responseDtos.VendorRegistrationResponse;
 import com.biding.vendor.service.VendorService;
@@ -17,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(VendorController.class)
@@ -33,6 +33,8 @@ public class VendorControllerTest {
     private ObjectMapper objectMapper;
 
     private VendorRegistrationRequest vendorRegistrationRequest;
+
+    private VendorUpdateRequest vendorUpdateRequest;
     private APIResponseDto<Object> apiResponse;
 
     @BeforeEach
@@ -42,6 +44,12 @@ public class VendorControllerTest {
                 .email("john.doe@example.com")
                 .contact("+1234567890")
                 .password("securePassword123")
+                .build();
+
+        vendorUpdateRequest = VendorUpdateRequest.builder()
+                .name("John Doe")
+                .email("john.doe@example.com")
+                .contact("+1234567890")
                 .build();
 
         VendorRegistrationResponse vendorRegistrationResponse = VendorRegistrationResponse.builder()
@@ -70,8 +78,8 @@ public class VendorControllerTest {
 
     @Test
     void testUpdateVendor() throws Exception {
-        int vendorId = 1;
-        when(vendorService.updateVendor(vendorId, vendorRegistrationRequest)).thenReturn(apiResponse);
+        Long vendorId = 1L;
+        when(vendorService.updateVendor(vendorId, vendorUpdateRequest)).thenReturn(apiResponse);
 
         mockMvc.perform(put("/vendors/{id}", vendorId)
                         .contentType(MediaType.APPLICATION_JSON)

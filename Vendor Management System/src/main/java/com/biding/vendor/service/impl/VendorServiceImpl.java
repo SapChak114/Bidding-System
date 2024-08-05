@@ -2,6 +2,7 @@ package com.biding.vendor.service.impl;
 
 import ch.qos.logback.core.util.StringUtil;
 import com.biding.vendor.dao.Vendor;
+import com.biding.vendor.dtos.requestDtos.VendorUpdateRequest;
 import com.biding.vendor.dtos.responseDtos.APIResponseDto;
 import com.biding.vendor.dtos.requestDtos.PaginationRequest;
 import com.biding.vendor.dtos.requestDtos.VendorRegistrationRequest;
@@ -51,6 +52,8 @@ public class VendorServiceImpl implements VendorService {
             } else {
                 return createResponse("Password cannot be empty", "Error", HttpStatus.BAD_REQUEST);
             }
+            vendor.setCreatedAt(new Date());
+            vendor.setUpdatedAt(new Date());
             vendor = vendorRepository.save(vendor);
             log.info("Vendor create operation successful for email: {}", vendor.getEmail());
             VendorRegistrationResponse response = mapper.convertValue(vendor, VendorRegistrationResponse.class);
@@ -70,7 +73,7 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     @Transactional
-    public APIResponseDto<Object> updateVendor(Integer id, VendorRegistrationRequest vendorRegistrationRequest) {
+    public APIResponseDto<Object> updateVendor(Long id, VendorUpdateRequest vendorRegistrationRequest) {
         log.info("Starting update vendor process for id: {}", id);
 
         try {
@@ -86,9 +89,7 @@ public class VendorServiceImpl implements VendorService {
             if (StringUtil.notNullNorEmpty(vendorRegistrationRequest.getContact())) {
                 vendor.setContact(vendorRegistrationRequest.getContact());
             }
-            if (StringUtil.notNullNorEmpty(vendorRegistrationRequest.getPassword())) {
-                vendor.setPassword(BCrypt.hashpw(vendorRegistrationRequest.getPassword(), BCrypt.gensalt()));
-            }
+
             vendor.setUpdatedAt(new Date());
             vendor = vendorRepository.save(vendor);
             log.info("Vendor update operation successful for id: {}", vendor.getId());
@@ -146,6 +147,24 @@ public class VendorServiceImpl implements VendorService {
         } catch (Exception e) {
             log.error("Exception while filtering data: {}", e.getMessage(), e);
             return createResponse("An error occurred while processing the request","Error" , HttpStatus.valueOf(500));
+        }
+    }
+
+    @Override
+    public APIResponseDto<Object> deleteById(Long id) {
+        try {
+            log.info("Starting user deletion process for ID: {}", id);
+            Vendor user = vendorRepository.findById(id)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendor not found"));
+
+            vendorRepository.delete(user);
+            log.info("User deleted successfully with ID: {}", id);
+            return createResponse("Vendor deleted successfully", "Success",HttpStatus.NO_CONTENT);
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error deleting Vendor with ID {}: {}", id, e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error deleting vendor", e);
         }
     }
 
