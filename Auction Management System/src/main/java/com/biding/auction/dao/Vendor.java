@@ -2,6 +2,7 @@ package com.biding.auction.dao;
 
 import com.biding.auction.dto.model.BaseModel;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,5 +32,6 @@ public class Vendor extends BaseModel {
     private String password;
 
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Product> products;
 }

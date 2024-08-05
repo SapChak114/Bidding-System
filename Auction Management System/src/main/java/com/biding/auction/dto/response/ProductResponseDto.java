@@ -16,5 +16,12 @@ public class ProductResponseDto {
     private String description;
     private Double basePrice;
 
-    // Additional fields or methods if needed
+    public ProductResponseDto(){}
+
+    public ProductResponseDto(Long id, String name, String description, Double basePrice) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.basePrice = basePrice;
+    }
 }

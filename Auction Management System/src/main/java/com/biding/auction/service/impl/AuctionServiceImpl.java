@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +57,8 @@ public class AuctionServiceImpl implements AuctionService {
             auction.setProduct(product);
             auction.setBiddingStartTime(converStringDateToDate(auctionRequestDto.getBiddingStartTime()));
             auction.setBiddingEndTime(converStringDateToDate(auctionRequestDto.getBiddingEndTime()));
+            auction.setCreatedAt(new Date());
+            auction.setUpdatedAt(new Date());
 
             auction = auctionRepository.save(auction);
 
@@ -94,6 +97,7 @@ public class AuctionServiceImpl implements AuctionService {
             }
             existingAuction.setBiddingStartTime(converStringDateToDate(auctionRequestDto.getBiddingStartTime()));
             existingAuction.setBiddingEndTime(converStringDateToDate(auctionRequestDto.getBiddingEndTime()));
+            existingAuction.setUpdatedAt(new Date());
 
             auctionRepository.save(existingAuction);
 
