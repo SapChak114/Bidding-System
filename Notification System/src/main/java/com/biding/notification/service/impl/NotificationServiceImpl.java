@@ -55,7 +55,6 @@ public class NotificationServiceImpl implements NotificationService {
         smsService.sendSms(toNumber, smsBody);
         emailService.sendSimpleEmail(toEmail, EMAIL_SUBJECT, emailBody);
 
-        // Save Notification to Repository
         Notification notification = mapper.convertValue(notificationRequestDto, Notification.class);
         notificationRepository.save(notification);
     }
