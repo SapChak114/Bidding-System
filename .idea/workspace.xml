@@ -6,10 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="164bafc5-0987-459e-8120-ee4492e6635c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/controller/AuctionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/controller/AuctionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/repository/AuctionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/repository/AuctionRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/AuctionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/AuctionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/impl/AuctionServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/impl/AuctionServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Auction Management System/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
