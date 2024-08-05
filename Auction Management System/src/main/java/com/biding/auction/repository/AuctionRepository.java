@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -25,4 +27,10 @@ public interface AuctionRepository extends JpaRepository<Auction, Long> {
                                 @Param("name") String name,
                                 @Param("email") String email,
                                 @Param("contact") String contact);
+
+    @Query(value = "SELECT * FROM auction a " +
+            "WHERE a.bidding_end_time < :currentDate " +
+            "AND a.winner_id IS NULL",
+            nativeQuery = true)
+    List<Auction> findAllByBiddingEndTimeBeforeAndWinnerIsNull(@Param("currentDate") Date currentDate);
 }

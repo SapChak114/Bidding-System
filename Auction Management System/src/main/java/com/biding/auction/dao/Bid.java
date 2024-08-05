@@ -41,5 +41,4 @@ public class Bid extends BaseModel {
         result = 31 * result + auction.hashCode();
         return result;
     }
-
 }

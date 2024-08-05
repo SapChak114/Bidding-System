@@ -1,6 +1,7 @@
 package com.biding.auction.service.impl;
 
 import com.biding.auction.dao.Auction;
+import com.biding.auction.dao.Bid;
 import com.biding.auction.dao.Product;
 import com.biding.auction.dao.User;
 import com.biding.auction.dto.request.AuctionRequestDto;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -236,5 +238,4 @@ public class AuctionServiceImpl implements AuctionService {
                 .response(content)
                 .build();
     }
-
 }
