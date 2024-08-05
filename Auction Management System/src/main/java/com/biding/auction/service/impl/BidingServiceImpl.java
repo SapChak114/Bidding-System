@@ -12,9 +12,9 @@ import com.biding.auction.repository.BidRepository;
 import com.biding.auction.repository.UserRepository;
 import com.biding.auction.service.BidingService;
 import com.biding.auction.winningStrategy.WinnerDeterminationContext;
-import com.biding.auction.winningStrategy.strategies.AlphabeticalUserNameStrategy;
-import com.biding.auction.winningStrategy.strategies.EarliestBidTimestampStrategy;
-import com.biding.auction.winningStrategy.strategies.HighestBidAmountStrategy;
+import com.biding.auction.winningStrategy.strategies.HighestAmountAlphabeticalUserNameStrategy;
+import com.biding.auction.winningStrategy.strategies.HighestAmountRandomBidStrategy;
+import com.biding.auction.winningStrategy.strategies.HighestBidAmountEarliestFirstStrategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.sqs.annotation.SqsListener;
 import lombok.extern.slf4j.Slf4j;
@@ -91,21 +91,9 @@ public class BidingServiceImpl implements BidingService {
                 continue;
             }
 
-            // TODO : strategy design pattern initial with highest bid strategy
-            WinnerDeterminationContext context = new WinnerDeterminationContext(new HighestBidAmountStrategy());
+            WinnerDeterminationContext context = new WinnerDeterminationContext(new HighestBidAmountEarliestFirstStrategy());
             Optional<Bid> winningBid = context.determineWinner(bids);
 
-            if (winningBid.isEmpty()) {
-                // TODO : if null go to the next strategy
-                context = new WinnerDeterminationContext(new EarliestBidTimestampStrategy());
-                winningBid = context.determineWinner(bids);
-
-                if (winningBid.isEmpty()) {
-                    // TODO : if null go to the next strategy
-                    context = new WinnerDeterminationContext(new AlphabeticalUserNameStrategy());
-                    winningBid = context.determineWinner(bids);
-                }
-            }
 
             if (winningBid.isPresent()) {
                 User winner = winningBid.get().getUser();
@@ -113,6 +101,8 @@ public class BidingServiceImpl implements BidingService {
                 auctionRepository.save(auction);
 
                 sendNotification(winner, auction);
+            } else {
+                log.error(" No Participants in Auction for auction id {} ", auction.getId());
             }
         }
     }

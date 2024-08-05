@@ -23,12 +23,8 @@ import static com.biding.auction.constants.WebSocketConstants.CHECK_BASIC_AUTH;
 @Order(1)
 public class WebSocketAuthInterceptor implements HandshakeInterceptor {
 
-    private final UserRepository userRepository;
+    private final String KEY = "Basic c2FwQGdtYWlsLmNvbTpCYW5nYWxvcmVAMTIx";
 
-    @Autowired
-    public WebSocketAuthInterceptor(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         if (request.getHeaders().get(AUTHORIZATION) == null || request.getHeaders().get(AUTHORIZATION).size() == 0) {
@@ -42,11 +38,7 @@ public class WebSocketAuthInterceptor implements HandshakeInterceptor {
             return false;
         }
 
-        String[] credentials = new String(Base64.getDecoder().decode(authHeader.substring(6))).split(":");
-        String email = credentials[0];
-        User user = userRepository.findByEmail(email);
-
-        if (Objects.isNull(user) || !BCrypt.checkpw(credentials[1], user.getPassword())) {
+        if (!authHeader.equals(KEY)) {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return false;
         }

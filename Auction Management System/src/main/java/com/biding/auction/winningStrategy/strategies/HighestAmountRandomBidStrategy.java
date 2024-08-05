@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-public class EarliestBidTimestampStrategy implements WinnerDeterminationStrategy {
+public class HighestAmountRandomBidStrategy implements WinnerDeterminationStrategy {
     @Override
     public Optional<Bid> determineWinner(List<Bid> bids) {
         return bids.stream()
