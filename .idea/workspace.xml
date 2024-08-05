@@ -6,7 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="164bafc5-0987-459e-8120-ee4492e6635c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Notification System/src/main/java/com/biding/notification/constants/NotificationConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/Notification System/src/main/java/com/biding/notification/constants/NotificationConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Vendor Management System/src/main/java/com/biding/vendor/controller/VendorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Vendor Management System/src/main/java/com/biding/vendor/controller/VendorController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Vendor Management System/src/main/java/com/biding/vendor/dtos/responseDtos/VendorRegistrationResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/Vendor Management System/src/main/java/com/biding/vendor/dtos/responseDtos/VendorRegistrationResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Vendor Management System/src/main/java/com/biding/vendor/repository/VendorRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Vendor Management System/src/main/java/com/biding/vendor/repository/VendorRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Vendor Management System/src/main/java/com/biding/vendor/service/VendorService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Vendor Management System/src/main/java/com/biding/vendor/service/VendorService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Vendor Management System/src/main/java/com/biding/vendor/service/impl/VendorServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Vendor Management System/src/main/java/com/biding/vendor/service/impl/VendorServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Vendor Management System/src/test/java/com/biding/vendor/VendorControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Vendor Management System/src/test/java/com/biding/vendor/VendorControllerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
