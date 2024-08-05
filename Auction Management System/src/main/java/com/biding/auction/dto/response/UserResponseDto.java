@@ -16,4 +16,13 @@ public class UserResponseDto {
     private String email;
     private String contact;
 
+    public UserResponseDto(){}
+
+    private UserResponseDto(Long id, String name, String email, String contact) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.contact = contact;
+    }
+
 }
