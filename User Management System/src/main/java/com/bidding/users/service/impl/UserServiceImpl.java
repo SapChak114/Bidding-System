@@ -4,6 +4,7 @@ import ch.qos.logback.core.util.StringUtil;
 import com.bidding.users.dao.User;
 import com.bidding.users.dto.request.PaginationRequest;
 import com.bidding.users.dto.request.UserRequestDto;
+import com.bidding.users.dto.request.UserUpdateRequestDto;
 import com.bidding.users.dto.response.APIResponse;
 import com.bidding.users.dto.response.PaginationResponse;
 import com.bidding.users.dto.response.UserResponseDto;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -48,6 +50,8 @@ public class UserServiceImpl implements UsersService {
             } else {
                 return createResponse("Bad Request Password Cannot Be Empty", HttpStatus.BAD_REQUEST);
             }
+            user.setCreatedAt(new Date());
+            user.setUpdatedAt(new Date());
             user = usersRepository.save(user);
             log.info("User created successfully with ID: {}", user.getId());
             return createResponse(mapper.convertValue(user, UserResponseDto.class), HttpStatus.CREATED);
@@ -59,16 +63,14 @@ public class UserServiceImpl implements UsersService {
 
     @Override
     @Transactional
-    public APIResponse<Object> updateUser(Long id, UserRequestDto userRequestDto) {
+    public APIResponse<Object> updateUser(Long id, UserUpdateRequestDto userRequestDto) {
         try {
             log.info("Starting user update process for ID: {}", id);
             User user = usersRepository.findById(id)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
             mapper.updateValue(user, userRequestDto);
-            if (StringUtil.notNullNorEmpty(userRequestDto.getPassword())) {
-                user.setPassword(BCrypt.hashpw(userRequestDto.getPassword(), BCrypt.gensalt()));
-            }
+
             user = usersRepository.save(user);
 
             log.info("User updated successfully with ID: {}", user.getId());
@@ -78,22 +80,6 @@ public class UserServiceImpl implements UsersService {
         } catch (Exception e) {
             log.error("Error updating user with ID {}: {}", id, e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error updating user", e);
-        }
-    }
-
-    @Override
-    public APIResponse<Object> getUserById(Long id) {
-        try {
-            log.info("Fetching user with ID: {}", id);
-            User user = usersRepository.findById(id)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-
-            return createResponse(mapper.convertValue(user, UserResponseDto.class), HttpStatus.OK);
-        } catch (ResponseStatusException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Error fetching user with ID {}: {}", id, e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching user", e);
         }
     }
 
@@ -151,25 +137,6 @@ public class UserServiceImpl implements UsersService {
         } catch (Exception e) {
             log.error("Error fetching users with filters: {}", e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching users", e);
-        }
-    }
-
-    @Override
-    @Transactional
-    public APIResponse<Object> deleteUser(Long id) {
-        try {
-            log.info("Starting user deletion process for ID: {}", id);
-            User user = usersRepository.findById(id)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-
-            usersRepository.delete(user);
-            log.info("User deleted successfully with ID: {}", id);
-            return createResponse("User deleted successfully", HttpStatus.NO_CONTENT);
-        } catch (ResponseStatusException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Error deleting user with ID {}: {}", id, e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error deleting user", e);
         }
     }
 

@@ -3,6 +3,7 @@ package com.bidding.users;
 import com.bidding.users.controller.UserController;
 import com.bidding.users.dto.request.PaginationRequest;
 import com.bidding.users.dto.request.UserRequestDto;
+import com.bidding.users.dto.request.UserUpdateRequestDto;
 import com.bidding.users.dto.response.APIResponse;
 import com.bidding.users.dto.response.UserResponseDto;
 import com.bidding.users.service.UsersService;
@@ -51,33 +52,18 @@ public class UserControllerTest {
 
     @Test
     void testUpdateUser() {
-        UserRequestDto requestDto = new UserRequestDto();
+        UserUpdateRequestDto requestDto = new UserUpdateRequestDto();
         APIResponse<Object> response = APIResponse.builder()
                 .statusCode(HttpStatus.OK.value())
                 .response("User updated successfully")
                 .build();
 
-        when(usersService.updateUser(anyLong(), any(UserRequestDto.class))).thenReturn(response);
+        when(usersService.updateUser(anyLong(), any(UserUpdateRequestDto.class))).thenReturn(response);
 
         ResponseEntity<APIResponse<Object>> result = userController.updateUser(1L, requestDto);
 
         assertEquals(HttpStatus.OK.value(), result.getStatusCodeValue());
         assertEquals("User updated successfully", result.getBody().getResponse());
-    }
-
-    @Test
-    void testGetUserById() {
-        APIResponse<Object> response = APIResponse.builder()
-                .statusCode(HttpStatus.OK.value())
-                .response("User details")
-                .build();
-
-        when(usersService.getUserById(anyLong())).thenReturn(response);
-
-        ResponseEntity<APIResponse<Object>> result = userController.getUserById(1L);
-
-        assertEquals(HttpStatus.OK.value(), result.getStatusCodeValue());
-        assertEquals("User details", result.getBody().getResponse());
     }
 
     @Test
@@ -121,18 +107,4 @@ public class UserControllerTest {
         assertEquals("Filtered users", result.getBody().getResponse());
     }
 
-    @Test
-    void testDeleteUsers() {
-        APIResponse<Object> response = APIResponse.builder()
-                .statusCode(HttpStatus.NO_CONTENT.value())
-                .response("User deleted successfully")
-                .build();
-
-        when(usersService.deleteUser(anyLong())).thenReturn(response);
-
-        ResponseEntity<APIResponse<Object>> result = userController.deleteUsers(1L);
-
-        assertEquals(HttpStatus.NO_CONTENT.value(), result.getStatusCodeValue());
-        assertEquals("User deleted successfully", result.getBody().getResponse());
-    }
 }
