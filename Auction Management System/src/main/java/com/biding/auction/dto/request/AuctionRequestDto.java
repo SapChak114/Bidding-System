@@ -1,12 +1,10 @@
 package com.biding.auction.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Date;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Getter
 @Setter
@@ -17,11 +15,12 @@ public class AuctionRequestDto {
 
     @NotNull(message = "Bidding start time is required")
     @FutureOrPresent(message = "Bidding start time must be in the present or future")
-    private Date biddingStartTime;
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private String biddingStartTime;
 
     @NotNull(message = "Bidding end time is required")
     @FutureOrPresent(message = "Bidding end time must be in the future")
-    private Date biddingEndTime;
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private String biddingEndTime;
 
-    private Long winnerId; // Can be null initially
 }

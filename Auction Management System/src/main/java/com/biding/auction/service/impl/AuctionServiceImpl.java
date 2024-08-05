@@ -28,23 +28,20 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 
-import static com.biding.auction.constants.AuctionConstant.BID_IS_PRESENT;
+import static com.biding.auction.constants.AuctionConstant.*;
+import static com.biding.auction.util.AuctionUtils.*;
 
 @Service
 @Slf4j
 public class AuctionServiceImpl implements AuctionService {
-
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
     private final AuctionRepository auctionRepository;
     private final ObjectMapper mapper;
-
     private final BidingService bidingService;
 
     @Autowired
-    public AuctionServiceImpl(ProductRepository productRepository, UserRepository userRepository, AuctionRepository auctionRepository, BidingService bidingService) {
+    public AuctionServiceImpl(ProductRepository productRepository, AuctionRepository auctionRepository, BidingService bidingService) {
         this.productRepository = productRepository;
-        this.userRepository = userRepository;
         this.auctionRepository = auctionRepository;
         this.bidingService = bidingService;
         this.mapper = new ObjectMapper();
@@ -53,43 +50,34 @@ public class AuctionServiceImpl implements AuctionService {
     public APIResponse<Object> saveAuction(AuctionRequestDto auctionRequestDto) {
         try {
             Product product = productRepository.findById(auctionRequestDto.getProductId())
-                    .orElseThrow(() -> new IllegalArgumentException("Product not found"));
-
-            User winner = null;
-            if (auctionRequestDto.getWinnerId() != null) {
-                winner = userRepository.findById(auctionRequestDto.getWinnerId())
-                        .orElseThrow(() -> new IllegalArgumentException("User not found"));
-            }
+                    .orElseThrow(() -> new IllegalArgumentException(PRODUCT_NOT_FOUND));
 
             Auction auction = new Auction();
             auction.setProduct(product);
-            auction.setBiddingStartTime(auctionRequestDto.getBiddingStartTime());
-            auction.setBiddingEndTime(auctionRequestDto.getBiddingEndTime());
-            auction.setWinner(winner);
+            auction.setBiddingStartTime(converStringDateToDate(auctionRequestDto.getBiddingStartTime()));
+            auction.setBiddingEndTime(converStringDateToDate(auctionRequestDto.getBiddingEndTime()));
 
             auction = auctionRepository.save(auction);
 
             ProductResponseDto productDto = mapper.convertValue(product, ProductResponseDto.class);
-            UserResponseDto userDto = winner != null ? mapper.convertValue(winner, UserResponseDto.class) : null;
 
             AuctionResponseDto responseDto = AuctionResponseDto.builder()
                     .id(auction.getId())
                     .product(productDto)
                     .biddingStartTime(auction.getBiddingStartTime())
                     .biddingEndTime(auction.getBiddingEndTime())
-                    .winner(userDto)
                     .build();
 
             return createResponse(responseDto, HttpStatus.CREATED);
         } catch (DataAccessException e) {
             log.error("Database error while creating auction: {}", e.getMessage(), e);
-            return createResponse("Error accessing the database", HttpStatus.SERVICE_UNAVAILABLE);
+            return createResponse(ACCESS_ERROR_DATABASE, HttpStatus.SERVICE_UNAVAILABLE);
         } catch (IllegalArgumentException e) {
             log.error("Validation error while creating auction: {}", e.getMessage(), e);
             return createResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             log.error("Exception while creating auction: {}", e.getMessage(), e);
-            return createResponse("An error occurred while processing the request", HttpStatus.INTERNAL_SERVER_ERROR);
+            return createResponse(ERROR_PROCESSING_REQUEST, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -97,48 +85,37 @@ public class AuctionServiceImpl implements AuctionService {
     public APIResponse<Object> updateAuction(Long id, AuctionRequestDto auctionRequestDto) {
         try {
             Auction existingAuction = auctionRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Auction not found"));
+                    .orElseThrow(() -> new IllegalArgumentException(AUCTION_NOT_FOUND));
 
             if (auctionRequestDto.getProductId() != null) {
                 Product product = productRepository.findById(auctionRequestDto.getProductId())
-                        .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+                        .orElseThrow(() -> new IllegalArgumentException(NO_PRODUCT_FOUND));
                 existingAuction.setProduct(product);
             }
-            existingAuction.setBiddingStartTime(auctionRequestDto.getBiddingStartTime());
-            existingAuction.setBiddingEndTime(auctionRequestDto.getBiddingEndTime());
-
-            if (auctionRequestDto.getWinnerId() != null) {
-                User winner = userRepository.findById(auctionRequestDto.getWinnerId())
-                        .orElseThrow(() -> new IllegalArgumentException("User not found"));
-                existingAuction.setWinner(winner);
-            } else {
-                existingAuction.setWinner(null);
-            }
+            existingAuction.setBiddingStartTime(converStringDateToDate(auctionRequestDto.getBiddingStartTime()));
+            existingAuction.setBiddingEndTime(converStringDateToDate(auctionRequestDto.getBiddingEndTime()));
 
             auctionRepository.save(existingAuction);
 
             ProductResponseDto productDto = mapper.convertValue(existingAuction.getProduct(), ProductResponseDto.class);
-            UserResponseDto userDto = existingAuction.getWinner() != null ?
-                    mapper.convertValue(existingAuction.getWinner(), UserResponseDto.class) : null;
 
             AuctionResponseDto responseDto = AuctionResponseDto.builder()
                     .id(existingAuction.getId())
                     .product(productDto)
                     .biddingStartTime(existingAuction.getBiddingStartTime())
                     .biddingEndTime(existingAuction.getBiddingEndTime())
-                    .winner(userDto)
                     .build();
 
             return createResponse(responseDto, HttpStatus.OK);
         } catch (DataAccessException e) {
             log.error("Database error while updating auction: {}", e.getMessage(), e);
-            return createResponse("Error accessing the database", HttpStatus.SERVICE_UNAVAILABLE);
+            return createResponse(ACCESS_ERROR_DATABASE, HttpStatus.SERVICE_UNAVAILABLE);
         } catch (IllegalArgumentException e) {
             log.error("Validation error while updating auction: {}", e.getMessage(), e);
             return createResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             log.error("Exception while updating auction: {}", e.getMessage(), e);
-            return createResponse("An error occurred while processing the request", HttpStatus.INTERNAL_SERVER_ERROR);
+            return createResponse(ERROR_PROCESSING_REQUEST, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -146,7 +123,7 @@ public class AuctionServiceImpl implements AuctionService {
     public APIResponse<Object> getAuctionByProductId(Long productId) {
         try {
             Auction auction = auctionRepository.findAuctionByProductId(productId)
-                    .orElseThrow(() -> new IllegalArgumentException("Auction not found for product ID"));
+                    .orElseThrow(() -> new IllegalArgumentException(AUCTION_NOT_FOUND_FOR_PRODUCT_ID+productId));
 
 
             ProductResponseDto productDto = mapper.convertValue(auction.getProduct(), ProductResponseDto.class);
@@ -164,13 +141,13 @@ public class AuctionServiceImpl implements AuctionService {
             return createResponse(responseDto, HttpStatus.OK);
         } catch (DataAccessException e) {
             log.error("Database error while fetching auction: {}", e.getMessage(), e);
-            return createResponse("Error accessing the database", HttpStatus.SERVICE_UNAVAILABLE);
+            return createResponse(ACCESS_ERROR_DATABASE, HttpStatus.SERVICE_UNAVAILABLE);
         } catch (IllegalArgumentException e) {
             log.error("Validation error while fetching auction: {}", e.getMessage(), e);
             return createResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             log.error("Exception while fetching auction: {}", e.getMessage(), e);
-            return createResponse("An error occurred while processing the request", HttpStatus.INTERNAL_SERVER_ERROR);
+            return createResponse(ERROR_PROCESSING_REQUEST, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -178,20 +155,20 @@ public class AuctionServiceImpl implements AuctionService {
     public APIResponse<Object> deleteAuctionById(Long id) {
         try {
             Auction auction = auctionRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Auction not found"));
+                    .orElseThrow(() -> new IllegalArgumentException(AUCTION_NOT_FOUND));
 
             auctionRepository.delete(auction);
 
-            return createResponse("Auction successfully deleted", HttpStatus.NO_CONTENT);
+            return createResponse(AUCTION_DELETED, HttpStatus.NO_CONTENT);
         } catch (DataAccessException e) {
             log.error("Database error while deleting auction: {}", e.getMessage(), e);
-            return createResponse("Error accessing the database", HttpStatus.SERVICE_UNAVAILABLE);
+            return createResponse(DATABASE_ACCESS_ERROR, HttpStatus.SERVICE_UNAVAILABLE);
         } catch (IllegalArgumentException e) {
             log.error("Validation error while deleting auction: {}", e.getMessage(), e);
             return createResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             log.error("Exception while deleting auction: {}", e.getMessage(), e);
-            return createResponse("An error occurred while processing the request", HttpStatus.INTERNAL_SERVER_ERROR);
+            return createResponse(ERROR_PROCESSING_REQUEST, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -201,7 +178,7 @@ public class AuctionServiceImpl implements AuctionService {
             log.info("Fetching auctions with filters: {}", paginationRequest);
 
             Pageable pageable = PageRequest.of(paginationRequest.getOffset() - 1, paginationRequest.getPageSize(),
-                    paginationRequest.getSort().toLowerCase().startsWith("a")
+                    paginationRequest.getSort().toLowerCase().startsWith(a)
                             ? Sort.by(paginationRequest.getField()).ascending()
                             : Sort.by(paginationRequest.getField()).descending());
 
@@ -227,7 +204,7 @@ public class AuctionServiceImpl implements AuctionService {
 
         } catch (Exception e) {
             log.error("Error fetching auctions with filters: {}", e.getMessage(), e);
-            return createResponse("Error fetching auctions", HttpStatus.INTERNAL_SERVER_ERROR);
+            return createResponse(ERROR_FETCHING_AUCTION, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -239,7 +216,7 @@ public class AuctionServiceImpl implements AuctionService {
             Pageable pageable = PageRequest.of(
                     paginationRequest.getOffset() - 1,
                     paginationRequest.getPageSize(),
-                    paginationRequest.getSort().equalsIgnoreCase("asc") ?
+                    paginationRequest.getSort().equalsIgnoreCase(ASC) ?
                             Sort.by(paginationRequest.getField()).ascending() :
                             Sort.by(paginationRequest.getField()).descending()
             );
@@ -262,7 +239,7 @@ public class AuctionServiceImpl implements AuctionService {
             return createResponse(paginationResponse, HttpStatus.OK);
         } catch (Exception e) {
             log.error("Error fetching auctions with filters: {}", e.getMessage(), e);
-            return createResponse("Error fetching auctions", HttpStatus.INTERNAL_SERVER_ERROR);
+            return createResponse(ERROR_FETCHING_AUCTION, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -285,7 +262,7 @@ public class AuctionServiceImpl implements AuctionService {
             if (content instanceof String) {
                 throw new ResponseStatusException(status, (String) content);
             } else {
-                throw new ResponseStatusException(status, "Error");
+                throw new ResponseStatusException(status, ERROR);
             }
         }
         return APIResponse.builder()

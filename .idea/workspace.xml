@@ -5,25 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="164bafc5-0987-459e-8120-ee4492e6635c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/config/WebSocketAuthInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/config/WebSocketAuthInterceptor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/controller/AuctionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/controller/AuctionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/controller/SchedulerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/controller/SchedulerController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/dao/Auction.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/dao/Auction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/dao/Bid.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/dao/Bid.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/repository/AuctionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/repository/AuctionRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/repository/BidRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/repository/BidRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/AuctionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/AuctionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/BidingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/BidingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/impl/AuctionServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/impl/AuctionServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/impl/BidingServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/impl/BidingServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/dao/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/dao/Product.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/dao/Vendor.java" beforeDir="false" afterPath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/dao/Vendor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/dto/request/ProductsRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/dto/request/ProductsRequestDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/dto/response/ProductsResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/dto/response/ProductsResponseDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/repository/ProductsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/repository/ProductsRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/service/impl/ProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Product Management/src/main/java/com/biding/product/service/impl/ProductServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/User Management System/src/main/java/com/bidding/users/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/User Management System/src/main/java/com/bidding/users/service/impl/UserServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/dto/request/AuctionRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/dto/request/AuctionRequestDto.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +81,7 @@
       <option name="presentableId" value="Default" />
       <updated>1722759707741</updated>
       <workItem from="1722759708866" duration="72000" />
-      <workItem from="1722780739818" duration="5766000" />
+      <workItem from="1722780739818" duration="5848000" />
     </task>
     <servers />
   </component>
