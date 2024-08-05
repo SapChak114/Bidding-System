@@ -6,12 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="164bafc5-0987-459e-8120-ee4492e6635c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/config/WebSocketAuthInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/config/WebSocketAuthInterceptor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/controller/SchedulerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/controller/SchedulerController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/impl/BidingServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/impl/BidingServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/winningStrategy/strategies/AlphabeticalUserNameStrategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/winningStrategy/strategies/HighestAmountAlphabeticalUserNameStrategy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/winningStrategy/strategies/EarliestBidTimestampStrategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/winningStrategy/strategies/HighestAmountRandomBidStrategy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/winningStrategy/strategies/HighestBidAmountStrategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/winningStrategy/strategies/HighestBidAmountEarliestFirstStrategy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Notification System/src/main/java/com/biding/notification/constants/NotificationConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/Notification System/src/main/java/com/biding/notification/constants/NotificationConstants.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
