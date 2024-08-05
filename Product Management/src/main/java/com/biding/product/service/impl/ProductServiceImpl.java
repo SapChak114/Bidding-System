@@ -21,14 +21,25 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.biding.product.constants.RestTemplateConstants.BASE_URL;
+import static com.biding.product.constants.RestTemplateConstants.PRODUCT_ID;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static com.biding.product.constants.RestTemplateConstants.BID_IS_PRESENT;
+import static com.biding.product.constants.ProductManagementConstants.*;
 
 @Service
 @Slf4j
@@ -40,11 +51,14 @@ public class ProductServiceImpl implements ProductsService {
 
     private final ObjectMapper mapper;
 
+    private final RestTemplate restTemplate;
+
     @Autowired
     public ProductServiceImpl(ProductsRepository productsRepository, VendorsRepository vendorsRepository, ObjectMapper mapper) {
         this.productsRepository = productsRepository;
         this.vendorsRepository = vendorsRepository;
         this.mapper = new ObjectMapper();
+        this.restTemplate = new RestTemplate();
     }
 
     @Override
@@ -56,11 +70,13 @@ public class ProductServiceImpl implements ProductsService {
             log.debug("Converted DTO to Entity: {}", product);
 
             Vendor vendor = vendorsRepository.findById(productsRequestDto.getVendorId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendor not found"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, VENDOR_NOT_FOUND));
             log.debug("Found Vendor: {}", vendor);
 
             product.setVendor(vendor);
 
+            product.setUpdatedAt(new Date());
+            product.setCreatedAt(new Date());
             product = productsRepository.save(product);
             log.debug("Saved Product: {}", product);
 
@@ -71,15 +87,15 @@ public class ProductServiceImpl implements ProductsService {
 
         } catch (DataIntegrityViolationException e) {
             log.error("Data Integrity Violation Exception occurred while creating product: {}", e.getMessage(), e);
-            return createResponse("Data integrity violation", HttpStatus.BAD_REQUEST);
+            return createResponse(DATA_INTEGRITY_VIOLATION, HttpStatus.BAD_REQUEST);
 
         } catch (ConstraintViolationException e) {
             log.error("Constraint Violation Exception occurred while creating product: {}", e.getMessage(), e);
-            return createResponse("Constraint violation", HttpStatus.BAD_REQUEST);
+            return createResponse(CONSTRAINT_VIOLATION, HttpStatus.BAD_REQUEST);
 
         } catch (Exception e) {
             log.error("Exception occurred while creating product: {}", e.getMessage(), e);
-            return createResponse("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+            return createResponse(UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -92,7 +108,7 @@ public class ProductServiceImpl implements ProductsService {
         Product existingProduct;
         try {
             existingProduct = productsRepository.findById(id)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, NO_PRODUCT_FOUND));
         } catch (ResponseStatusException e) {
             log.error("Error retrieving product with id: {}", id, e);
             return createResponse(e.getReason(), HttpStatus.NOT_FOUND);
@@ -109,6 +125,7 @@ public class ProductServiceImpl implements ProductsService {
                 existingProduct.setBasePrice(productsRequestDto.getBasePrice());
             }
 
+            existingProduct.setUpdatedAt(new Date());
             Product updatedProduct = productsRepository.save(existingProduct);
             ProductsResponseDto productsResponseDto = mapper.convertValue(updatedProduct, ProductsResponseDto.class);
 
@@ -117,7 +134,7 @@ public class ProductServiceImpl implements ProductsService {
             return createResponse(productsResponseDto, HttpStatus.OK);
         } catch (DataIntegrityViolationException e) {
             log.error("Data integrity violation while updating product with id: {}", id, e);
-            return createResponse("Data integrity violation", HttpStatus.BAD_REQUEST);
+            return createResponse(DATA_INTEGRITY_VIOLATION, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             log.error("Unexpected error while updating product with id: {}", id, e);
             return createResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -135,6 +152,7 @@ public class ProductServiceImpl implements ProductsService {
         return APIResponse.builder()
                 .statusCode(status.value())
                 .response(content)
+                .status(SUCCESS)
                 .build();
     }
 
@@ -156,7 +174,7 @@ public class ProductServiceImpl implements ProductsService {
             return createResponse(e.getReason(), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             log.error("Unexpected error while fetching product with id: {}", id, e);
-            return createResponse("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+            return createResponse(UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -192,19 +210,18 @@ public class ProductServiceImpl implements ProductsService {
                         .build(), HttpStatus.OK);
             } else {
                 log.warn("No products found for the given criteria");
-                return createResponse("No products found for the given criteria", HttpStatus.NOT_FOUND);
+                return createResponse(NO_PRODUCT_FOUND, HttpStatus.NOT_FOUND);
             }
         } catch (DataAccessException e) {
             log.error("Database error while fetching products: {}", e.getMessage(), e);
-            return createResponse("Error accessing the database", HttpStatus.INTERNAL_SERVER_ERROR);
+            return createResponse(DATABASE_ACCESS_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             log.error("Exception while fetching products: {}", e.getMessage(), e);
-            return createResponse("Error while fetching products", HttpStatus.INTERNAL_SERVER_ERROR);
+            return createResponse(FETCHING_PRODUCT_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     private List<ProductsResponseDto> mapperConvert(Page<Product> page) {
-        // Convert Products entities to ProductsResponseDto
         return page.getContent().stream()
                 .map(product -> mapper.convertValue(product, ProductsResponseDto.class))
                 .collect(Collectors.toList());
@@ -216,19 +233,50 @@ public class ProductServiceImpl implements ProductsService {
 
         try {
             Product product = productsRepository.findById(id)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, NO_PRODUCT_FOUND));
 
+            ResponseEntity<?> response = deleteAuctionByProductId(id);
+            if (response.getBody() instanceof String
+                    && StringUtil.notNullNorEmpty(((String) response.getBody()))
+                    && ((String) response.getBody()).equals(BID_IS_PRESENT)) {
+                return createResponse(DENY_PRODUCT_DELETE, HttpStatus.BAD_REQUEST);
+            }
             productsRepository.delete(product);
 
             log.info("Successfully deleted product with id: {}", id);
-
-            return createResponse("Product successfully deleted", HttpStatus.NO_CONTENT);
+            return createResponse(DELETED_SUCCESSFULLY, HttpStatus.NO_CONTENT);
         } catch (ResponseStatusException e) {
             log.error("Error while deleting product with id: {}", id, e);
             return createResponse(e.getReason(), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             log.error("Unexpected error while deleting product with id: {}", id, e);
-            return createResponse("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+            return createResponse(UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<String> deleteAuctionByProductId(Long productId) {
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
+                .queryParam(PRODUCT_ID, productId);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(CONTENT_TYPE, APPLICATION_JSON_VALUE);
+
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+        try {
+            return restTemplate.exchange(
+                    uriBuilder.toUriString(),
+                    HttpMethod.DELETE,
+                    requestEntity,
+                    String.class);
+        } catch (HttpClientErrorException e) {
+            log.error("HTTP Client Error: Status Code = {}, Response Body = {}",
+                    e.getStatusCode(), e.getResponseBodyAsString());
+            throw e;  // or handle the exception as per your requirement
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while making the HTTP request", e);
+            throw e;
         }
     }
 

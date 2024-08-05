@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 public interface ProductsRepository extends JpaRepository<Product, Long> {
 
 
-    @Query(value = "SELECT * FROM products p " +
+    @Query(value = "SELECT * FROM product p " +
             "WHERE (:name IS NULL OR p.name = :name) " +
             "AND (:description IS NULL OR p.description = :description) " +
             "AND (:basePriceMin IS NULL OR p.base_price >= :basePriceMin) " +
