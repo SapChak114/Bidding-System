@@ -14,4 +14,5 @@ public class AuctionConstant {
     public static final String ERROR = "Error";
     public static final String ASC = "asc";
     public static final String a = "a";
+    public static final String NOTIFICATION_URL = "http://localhost:8083/notify/";
 }

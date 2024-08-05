@@ -1,5 +1,6 @@
 package com.biding.auction.dto.response;
 
+import com.biding.auction.enums.BiddingStrategy;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,14 +19,16 @@ public class AuctionResponseDto {
     private Date biddingStartTime;
     private Date biddingEndTime;
     private UserResponseDto winner; // Can be null if no winner is assigned
+    private BiddingStrategy biddingStrategy;
 
-    public AuctionResponseDto(){};
-    public AuctionResponseDto(Long id, ProductResponseDto product, Date biddingStartTime, Date biddingEndTime, UserResponseDto winner) {
+    public AuctionResponseDto(){}
+    public AuctionResponseDto(Long id, ProductResponseDto product, Date biddingStartTime, Date biddingEndTime, UserResponseDto winner, BiddingStrategy biddingStrategy) {
         this.id = id;
         this.product = product;
         this.biddingStartTime = biddingStartTime;
         this.biddingEndTime = biddingEndTime;
         this.winner = winner;
+        this.biddingStrategy = biddingStrategy;
     }
 
 }

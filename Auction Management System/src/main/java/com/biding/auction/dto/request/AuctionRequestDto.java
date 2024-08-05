@@ -1,5 +1,6 @@
 package com.biding.auction.dto.request;
 
+import com.biding.auction.enums.BiddingStrategy;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
@@ -22,5 +23,8 @@ public class AuctionRequestDto {
     @NotNull(message = "Bidding end time is required")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private String biddingEndTime;
+
+    @NotNull(message = "Bidding Strategy is required")
+    private String biddingStrategy;
 
 }

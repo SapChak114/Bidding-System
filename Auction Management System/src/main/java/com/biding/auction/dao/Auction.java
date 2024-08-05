@@ -1,6 +1,7 @@
 package com.biding.auction.dao;
 
 import com.biding.auction.dto.model.BaseModel;
+import com.biding.auction.enums.BiddingStrategy;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -28,6 +29,10 @@ public class Auction extends BaseModel {
 
     @Column(nullable = false)
     private Date biddingEndTime;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BiddingStrategy biddingStrategy;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)  // Nullable initially
