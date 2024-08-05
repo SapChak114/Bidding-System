@@ -69,6 +69,7 @@ public class AuctionServiceImpl implements AuctionService {
                     .product(productDto)
                     .biddingStartTime(auction.getBiddingStartTime())
                     .biddingEndTime(auction.getBiddingEndTime())
+                    .biddingStrategy(auction.getBiddingStrategy())
                     .build();
 
             return createResponse(responseDto, HttpStatus.CREATED);
@@ -108,6 +109,7 @@ public class AuctionServiceImpl implements AuctionService {
                     .product(productDto)
                     .biddingStartTime(existingAuction.getBiddingStartTime())
                     .biddingEndTime(existingAuction.getBiddingEndTime())
+                    .biddingStrategy(existingAuction.getBiddingStrategy())
                     .build();
 
             return createResponse(responseDto, HttpStatus.OK);
@@ -140,6 +142,7 @@ public class AuctionServiceImpl implements AuctionService {
                     .biddingStartTime(auction.getBiddingStartTime())
                     .biddingEndTime(auction.getBiddingEndTime())
                     .winner(userDto)
+                    .biddingStrategy(auction.getBiddingStrategy())
                     .build();
 
             return createResponse(responseDto, HttpStatus.OK);
