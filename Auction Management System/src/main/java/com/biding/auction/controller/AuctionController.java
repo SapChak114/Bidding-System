@@ -76,4 +76,21 @@ public class AuctionController {
         return ResponseEntity.status(resp.getStatusCode()).body(resp);
     }
 
+    @GetMapping("/with-winner")
+    public ResponseEntity<APIResponse<Object>> getAuctionsWithWinner(
+            @RequestParam("offset") int offset,
+            @RequestParam("pageSize") int pageSize,
+            @RequestParam("field") String field,
+            @RequestParam("sort") String sort) {
+
+        APIResponse<Object> resp = auctionService.getAuctionsWithWinner(PaginationRequest.builder()
+                            .offset(offset)
+                            .pageSize(pageSize)
+                            .field(field)
+                            .sort(sort)
+                            .build());
+
+        return ResponseEntity.status(resp.getStatusCode()).body(resp);
+    }
+
 }

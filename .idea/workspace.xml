@@ -5,14 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="164bafc5-0987-459e-8120-ee4492e6635c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/winningStrategy/strategies/AlphabeticalUserNameStrategy.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/dao/Bid.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/dao/Bid.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/controller/AuctionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/controller/AuctionController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/repository/AuctionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/repository/AuctionRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/repository/BidRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/repository/BidRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/SqsListenerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/impl/BidingServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/AuctionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/AuctionService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/impl/AuctionServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/java/com/biding/auction/service/impl/AuctionServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Auction Management System/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Auction Management System/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,7 +85,7 @@
       <option name="presentableId" value="Default" />
       <updated>1722759707741</updated>
       <workItem from="1722759708866" duration="72000" />
-      <workItem from="1722780739818" duration="3973000" />
+      <workItem from="1722780739818" duration="4551000" />
     </task>
     <servers />
   </component>

@@ -3,6 +3,7 @@ package com.biding.auction.service;
 import com.biding.auction.dto.request.AuctionRequestDto;
 import com.biding.auction.dto.request.PaginationRequest;
 import com.biding.auction.dto.response.APIResponse;
+import org.hibernate.query.Page;
 
 public interface AuctionService {
     APIResponse<Object> saveAuction(AuctionRequestDto auctionRequestDto);
@@ -14,4 +15,6 @@ public interface AuctionService {
     APIResponse<Object> deleteAuctionById(Long id);
 
     APIResponse<Object> getAuctionsByFilters(PaginationRequest build);
+
+    APIResponse<Object> getAuctionsWithWinner(PaginationRequest paginationRequest);
 }

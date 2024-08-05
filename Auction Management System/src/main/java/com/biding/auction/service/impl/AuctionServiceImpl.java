@@ -1,7 +1,6 @@
 package com.biding.auction.service.impl;
 
 import com.biding.auction.dao.Auction;
-import com.biding.auction.dao.Bid;
 import com.biding.auction.dao.Product;
 import com.biding.auction.dao.User;
 import com.biding.auction.dto.request.AuctionRequestDto;
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -221,7 +219,42 @@ public class AuctionServiceImpl implements AuctionService {
 
         } catch (Exception e) {
             log.error("Error fetching auctions with filters: {}", e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching auctions", e);
+            return createResponse("Error fetching auctions", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public APIResponse<Object> getAuctionsWithWinner(PaginationRequest paginationRequest) {
+        log.info("Fetching auctions with winner with pagination request: {}", paginationRequest);
+
+        try {
+            Pageable pageable = PageRequest.of(
+                    paginationRequest.getOffset() - 1,
+                    paginationRequest.getPageSize(),
+                    paginationRequest.getSort().equalsIgnoreCase("asc") ?
+                            Sort.by(paginationRequest.getField()).ascending() :
+                            Sort.by(paginationRequest.getField()).descending()
+            );
+
+            Page<Auction> page = auctionRepository.findByWinnerIsNotNull(pageable);
+
+            List<AuctionResponseDto> response = mapper.convertValue(page.getContent(),
+                    mapper.getTypeFactory().constructCollectionType(List.class, AuctionResponseDto.class));
+
+            PaginationResponse<AuctionResponseDto> paginationResponse = PaginationResponse.<AuctionResponseDto>builder()
+                    .size(page.getSize())
+                    .totalNoPages(page.getTotalPages())
+                    .currentPage(page.getNumber() + 1)
+                    .totalElements(page.getTotalElements())
+                    .sortBy(paginationRequest.getField())
+                    .sortByType(paginationRequest.getSort())
+                    .content(response)
+                    .build();
+
+            return createResponse(paginationResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error fetching auctions with filters: {}", e.getMessage(), e);
+            return createResponse("Error fetching auctions", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

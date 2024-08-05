@@ -33,4 +33,6 @@ public interface AuctionRepository extends JpaRepository<Auction, Long> {
             "AND a.winner_id IS NULL",
             nativeQuery = true)
     List<Auction> findAllByBiddingEndTimeBeforeAndWinnerIsNull(@Param("currentDate") Date currentDate);
+
+    Page<Auction> findByWinnerIsNotNull(Pageable pageable);
 }
