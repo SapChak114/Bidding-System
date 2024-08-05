@@ -1,14 +1,14 @@
 package com.biding.auction.service.impl;
 
+import ch.qos.logback.core.util.StringUtil;
 import com.biding.auction.dao.Auction;
 import com.biding.auction.dao.Product;
-import com.biding.auction.dao.User;
 import com.biding.auction.dto.request.AuctionRequestDto;
 import com.biding.auction.dto.request.PaginationRequest;
 import com.biding.auction.dto.response.*;
+import com.biding.auction.enums.BiddingStrategy;
 import com.biding.auction.repository.AuctionRepository;
 import com.biding.auction.repository.ProductRepository;
-import com.biding.auction.repository.UserRepository;
 import com.biding.auction.service.AuctionService;
 import com.biding.auction.service.BidingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,10 +27,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.biding.auction.constants.AuctionConstant.*;
-import static com.biding.auction.util.AuctionUtils.*;
+import static com.biding.auction.util.AuctionUtils.converStringDateToDate;
 
 @Service
 @Slf4j
@@ -57,6 +58,13 @@ public class AuctionServiceImpl implements AuctionService {
             auction.setProduct(product);
             auction.setBiddingStartTime(converStringDateToDate(auctionRequestDto.getBiddingStartTime()));
             auction.setBiddingEndTime(converStringDateToDate(auctionRequestDto.getBiddingEndTime()));
+
+            BiddingStrategy biddingStrategy = BiddingStrategy.getByName(auctionRequestDto.getBiddingStrategy());
+            if (Objects.isNull(biddingStrategy)) {
+                throw new IllegalArgumentException(INVALID_BIDING_STRATEGY);
+            }
+            auction.setBiddingStrategy(biddingStrategy);
+
             auction.setCreatedAt(new Date());
             auction.setUpdatedAt(new Date());
 
@@ -95,6 +103,13 @@ public class AuctionServiceImpl implements AuctionService {
                 Product product = productRepository.findById(auctionRequestDto.getProductId())
                         .orElseThrow(() -> new IllegalArgumentException(NO_PRODUCT_FOUND));
                 existingAuction.setProduct(product);
+            }
+            if (StringUtil.notNullNorEmpty(auctionRequestDto.getBiddingStrategy())) {
+                BiddingStrategy biddingStrategy = BiddingStrategy.getByName(auctionRequestDto.getBiddingStrategy());
+                if (Objects.isNull(biddingStrategy)) {
+                    throw new IllegalArgumentException(INVALID_BIDING_STRATEGY);
+                }
+                existingAuction.setBiddingStrategy(biddingStrategy);
             }
             existingAuction.setBiddingStartTime(converStringDateToDate(auctionRequestDto.getBiddingStartTime()));
             existingAuction.setBiddingEndTime(converStringDateToDate(auctionRequestDto.getBiddingEndTime()));

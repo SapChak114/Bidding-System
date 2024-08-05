@@ -15,4 +15,8 @@ public class AuctionConstant {
     public static final String ASC = "asc";
     public static final String a = "a";
     public static final String NOTIFICATION_URL = "http://localhost:8083/notify/";
+    public static final String EARLY_DATE = "EARLY_DATE";
+    public static final String ALPHABETIC = "ALPHABETIC";
+    public static final String RANDOM = "RANDOM";
+    public static final String INVALID_BIDING_STRATEGY = "Null Or Invalid Biding Strategy";
 }
