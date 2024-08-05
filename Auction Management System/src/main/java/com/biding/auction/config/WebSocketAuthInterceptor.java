@@ -1,8 +1,7 @@
 package com.biding.auction.config;
 
-import com.biding.auction.constants.WebSocketConstants;
 import com.biding.auction.dao.User;
-import com.biding.auction.repository.UsersRepository;
+import com.biding.auction.repository.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -17,32 +16,35 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.biding.auction.constants.WebSocketConstants.AUTHORIZATION;
+import static com.biding.auction.constants.WebSocketConstants.CHECK_BASIC_AUTH;
+
 @Component
 @Order(1)
 public class WebSocketAuthInterceptor implements HandshakeInterceptor {
 
-    private final UsersRepository usersRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public WebSocketAuthInterceptor(UsersRepository usersRepository) {
-        this.usersRepository = usersRepository;
+    public WebSocketAuthInterceptor(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        if (request.getHeaders().get(WebSocketConstants.AUTHORIZATION) == null || request.getHeaders().get(WebSocketConstants.AUTHORIZATION).size() == 0) {
+        if (request.getHeaders().get(AUTHORIZATION) == null || request.getHeaders().get(AUTHORIZATION).size() == 0) {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return false;
         }
-        String authHeader = Objects.requireNonNull(request.getHeaders().get(WebSocketConstants.AUTHORIZATION)).get(0);
+        String authHeader = Objects.requireNonNull(request.getHeaders().get(AUTHORIZATION)).get(0);
 
-        if (!authHeader.startsWith(WebSocketConstants.CHECK_BASIC_AUTH)) {
+        if (!authHeader.startsWith(CHECK_BASIC_AUTH)) {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return false;
         }
 
         String[] credentials = new String(Base64.getDecoder().decode(authHeader.substring(6))).split(":");
         String email = credentials[0];
-        User user = usersRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
 
         if (Objects.isNull(user) || !BCrypt.checkpw(credentials[1], user.getPassword())) {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);

@@ -1,6 +1,7 @@
 package com.biding.auction.dao;
 
 import com.biding.auction.dto.model.BaseModel;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,6 +18,7 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User extends BaseModel {
 
     @Column(nullable = false)
