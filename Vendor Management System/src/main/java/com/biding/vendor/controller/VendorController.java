@@ -1,10 +1,9 @@
 package com.biding.vendor.controller;
 
-import com.biding.vendor.dtos.responseDtos.APIResponseDto;
 import com.biding.vendor.dtos.requestDtos.PaginationRequest;
 import com.biding.vendor.dtos.requestDtos.VendorRegistrationRequest;
+import com.biding.vendor.dtos.responseDtos.APIResponseDto;
 import com.biding.vendor.service.VendorService;
-import com.biding.vendor.service.impl.VendorServiceImpl;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ public class VendorController {
     private final VendorService vendorService;
 
     @Autowired
-    public VendorController(VendorServiceImpl vendorService) {
+    public VendorController(VendorService vendorService) {
         this.vendorService = vendorService;
     }
 

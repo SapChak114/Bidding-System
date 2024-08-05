@@ -49,56 +49,65 @@ public class VendorServiceImpl implements VendorService {
             if (StringUtil.notNullNorEmpty(vendorRegistrationRequest.getPassword())) {
                 vendor.setPassword(BCrypt.hashpw(vendorRegistrationRequest.getPassword(), BCrypt.gensalt()));
             } else {
-                return createErrorResponse("Bad Request Password Cannot Be Empty", 400);
+                return createResponse("Password cannot be empty", "Error", HttpStatus.BAD_REQUEST);
             }
             vendor = vendorRepository.save(vendor);
             log.info("Vendor create operation successful for email: {}", vendor.getEmail());
-            return APIResponseDto
-                    .builder()
-                    .status("Success")
-                    .statusCode(201)
-                    .response(mapper.convertValue(vendor, VendorRegistrationResponse.class))
-                    .build();
+            VendorRegistrationResponse response = mapper.convertValue(vendor, VendorRegistrationResponse.class);
+            return createResponse(response, "Success", HttpStatus.CREATED);
         } catch (DataAccessException e) {
-            log.error("Database error while creating or updating vendor: {}", e.getMessage(), e);
+            log.error("Database error while creating vendor: {}", e.getMessage(), e);
             if (e.getMessage().toLowerCase().contains("duplicate")) {
-                return createErrorResponse("Bad Request : Duplicate Entry", 400);
+                return createResponse("Duplicate entry", "Error", HttpStatus.BAD_REQUEST);
             }
-            return createErrorResponse("Unable to create vendor", 503);
+            return createResponse("Unable to create vendor", "Error", HttpStatus.SERVICE_UNAVAILABLE);
         } catch (Exception e) {
-            log.error("Exception while creating or updating vendor: {}", e.getMessage(), e);
-            return createErrorResponse("An error occurred while processing the request", 500);
+            log.error("Exception while creating vendor: {}", e.getMessage(), e);
+            return createResponse("An error occurred while processing the request", "Error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     @Override
     @Transactional
     public APIResponseDto<Object> updateVendor(Integer id, VendorRegistrationRequest vendorRegistrationRequest) {
         log.info("Starting update vendor process for id: {}", id);
-        Vendor vendor = vendorRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendor not found"));
 
-        if (StringUtil.notNullNorEmpty(vendorRegistrationRequest.getName())) {
-            vendor.setName(vendorRegistrationRequest.getName());
+        try {
+            Vendor vendor = vendorRepository.findById(id)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendor not found"));
+
+            if (StringUtil.notNullNorEmpty(vendorRegistrationRequest.getName())) {
+                vendor.setName(vendorRegistrationRequest.getName());
+            }
+            if (StringUtil.notNullNorEmpty(vendorRegistrationRequest.getEmail())) {
+                vendor.setEmail(vendorRegistrationRequest.getEmail());
+            }
+            if (StringUtil.notNullNorEmpty(vendorRegistrationRequest.getContact())) {
+                vendor.setContact(vendorRegistrationRequest.getContact());
+            }
+            if (StringUtil.notNullNorEmpty(vendorRegistrationRequest.getPassword())) {
+                vendor.setPassword(BCrypt.hashpw(vendorRegistrationRequest.getPassword(), BCrypt.gensalt()));
+            }
+            vendor.setUpdatedAt(new Date());
+            vendor = vendorRepository.save(vendor);
+            log.info("Vendor update operation successful for id: {}", vendor.getId());
+            return APIResponseDto
+                    .builder()
+                    .status("Success")
+                    .statusCode(200)
+                    .response(mapper.convertValue(vendor, VendorRegistrationResponse.class))
+                    .build();
+        } catch (DataAccessException e) {
+            log.error("Database error while updating vendor: {}", e.getMessage(), e);
+            if (e.getMessage().toLowerCase().contains("duplicate")) {
+                return createResponse("Duplicate entry", "Error",HttpStatus.BAD_REQUEST);
+            }
+            return createResponse("Unable to update vendor", "Error", HttpStatus.SERVICE_UNAVAILABLE);
+        } catch (Exception e) {
+            log.error("Exception while updating vendor: {}", e.getMessage(), e);
+            return createResponse("An error occurred while processing the request", "Error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        if (StringUtil.notNullNorEmpty(vendorRegistrationRequest.getEmail())) {
-            vendor.setEmail(vendorRegistrationRequest.getEmail());
-        }
-        if (StringUtil.notNullNorEmpty(vendorRegistrationRequest.getContact())) {
-            vendor.setContact(vendorRegistrationRequest.getContact());
-        }
-        if (StringUtil.notNullNorEmpty(vendorRegistrationRequest.getPassword())) {
-            vendor.setPassword(BCrypt.hashpw(vendorRegistrationRequest.getPassword(), BCrypt.gensalt()));
-        }
-        vendor.setUpdatedAt(new Date());
-        vendor = vendorRepository.save(vendor);
-        log.info("Vendor update operation successful for id: {}", vendor.getId());
-        return APIResponseDto
-                .builder()
-                .status("Success")
-                .statusCode(200)
-                .response(mapper.convertValue(vendor, VendorRegistrationResponse.class))
-                .build();
     }
 
 
@@ -109,22 +118,17 @@ public class VendorServiceImpl implements VendorService {
             Vendor vendor = vendorRepository.findByEmail(email);
             if (!Objects.isNull(vendor)) {
                 log.info("Vendor found for email: {}", email);
-                return APIResponseDto
-                        .builder()
-                        .status("Success")
-                        .response(mapper.convertValue(vendor, VendorRegistrationResponse.class))
-                        .statusCode(200)
-                        .build();
+                return createResponse(mapper.convertValue(vendor, VendorRegistrationResponse.class), "Success", HttpStatus.valueOf(200));
             } else {
                 log.warn("No vendor found for email: {}", email);
-                return createErrorResponse("No vendor found with the given email id: " + email, 404);
+                return createResponse("No vendor found with the given email id: " + email,"Error", HttpStatus.valueOf(404));
             }
         } catch (DataAccessException e) {
             log.error("Database error while fetching vendor by email: {}", e.getMessage(), e);
-            return createErrorResponse("Error accessing the database", 503);
+            return createResponse("Error accessing the database", "Error",HttpStatus.valueOf(503));
         } catch (Exception e) {
             log.error("Exception while fetching vendor by email: {}", e.getMessage(), e);
-            return createErrorResponse("An error occurred while processing the request", 500);
+            return createResponse("An error occurred while processing the request","Error",HttpStatus.valueOf( 500));
         }
     }
 
@@ -135,18 +139,13 @@ public class VendorServiceImpl implements VendorService {
         try {
             PaginationResponse<Object> filteredData = findByOptions(paginationRequest);
             log.debug("Fetched {} vendors", filteredData.getContent().size());
-            return APIResponseDto
-                    .builder()
-                    .response(filteredData)
-                    .status("Success")
-                    .statusCode(200)
-                    .build();
+            return createResponse(filteredData, "Success", HttpStatus.valueOf(200));
         } catch (DataAccessException e) {
             log.error("Database error while fetching vendors: {}", e.getMessage(), e);
-            return createErrorResponse("Error accessing the database", 503);
+            return createResponse("Error accessing the database", "Error" , HttpStatus.valueOf(503));
         } catch (Exception e) {
             log.error("Exception while filtering data: {}", e.getMessage(), e);
-            return createErrorResponse("An error occurred while processing the request", 500);
+            return createResponse("An error occurred while processing the request","Error" , HttpStatus.valueOf(500));
         }
     }
 
@@ -193,12 +192,19 @@ public class VendorServiceImpl implements VendorService {
         return mapper.convertValue(page.getContent(), mapper.getTypeFactory().constructCollectionType(List.class, VendorRegistrationResponse.class));
     }
 
-    private APIResponseDto<Object> createErrorResponse(String message, int statusCode) {
-        return APIResponseDto
-                .builder()
-                .status("Error")
-                .statusCode(statusCode)
-                .response(message)
+    private APIResponseDto<Object> createResponse(Object content, String message, HttpStatus status) {
+        if (status.is4xxClientError() || status.is5xxServerError()) {
+            if (content instanceof String) {
+                throw new ResponseStatusException(status, (String) content);
+            } else {
+                throw new ResponseStatusException(status, "Error");
+            }
+        }
+        return APIResponseDto.builder()
+                .statusCode(status.value())
+                .status(message)
+                .response(content)
                 .build();
     }
+
 }

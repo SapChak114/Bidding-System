@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder(builderClassName = "builder")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class VendorRegistrationRequest {
     @NotBlank(message = "Name cannot be blank")
