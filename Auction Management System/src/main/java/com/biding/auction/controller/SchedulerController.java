@@ -20,7 +20,7 @@ public class SchedulerController {
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)  //TODO : As of now 1 hour interval is scheduled
     public void findWinner() {
-        System.out.println("Starting winner determination process");
+        log.info("Starting winner determination process");
         try {
             bidingService.determineAuctionWinner();
         } catch (Exception e) {

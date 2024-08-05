@@ -5,12 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "bid", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "auction_id"}))
 @JsonIgnoreProperties(ignoreUnknown = true)
+@ToString
 public class Bid extends BaseModel {
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -31,7 +31,8 @@ public class AuctionController {
     @PutMapping("/{id}")
     public ResponseEntity<APIResponse<Object>> updateAuction(
             @PathVariable("id") Long id,
-            @RequestBody @Valid AuctionRequestDto auctionRequestDto) {
+            @RequestBody @Valid AuctionRequestDto auctionRequestDto
+            ) {
 
         APIResponse<Object> response = auctionService.updateAuction(id, auctionRequestDto);
         return ResponseEntity.status(response.getStatusCode()).body(response);
@@ -51,6 +52,11 @@ public class AuctionController {
 
         APIResponse<Object> response = auctionService.deleteAuctionById(id);
         return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    @DeleteMapping("/")
+    public ResponseEntity<?> deleteAuctionByProductId(@RequestParam("productId") Long productId) {
+        return auctionService.deleteAuctionByProductId(productId);
     }
 
     @GetMapping("/filters/{offSet}/{pageSize}/{field}/{sort}")

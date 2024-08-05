@@ -10,6 +10,7 @@ import com.biding.auction.repository.AuctionRepository;
 import com.biding.auction.repository.ProductRepository;
 import com.biding.auction.repository.UserRepository;
 import com.biding.auction.service.AuctionService;
+import com.biding.auction.service.BidingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
+
+import static com.biding.auction.constants.AuctionConstant.BID_IS_PRESENT;
 
 @Service
 @Slf4j
@@ -34,12 +39,15 @@ public class AuctionServiceImpl implements AuctionService {
     private final AuctionRepository auctionRepository;
     private final ObjectMapper mapper;
 
+    private final BidingService bidingService;
+
     @Autowired
-    public AuctionServiceImpl(ProductRepository productRepository, UserRepository userRepository, AuctionRepository auctionRepository, ObjectMapper mapper) {
+    public AuctionServiceImpl(ProductRepository productRepository, UserRepository userRepository, AuctionRepository auctionRepository, BidingService bidingService) {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.auctionRepository = auctionRepository;
-        this.mapper = mapper;
+        this.bidingService = bidingService;
+        this.mapper = new ObjectMapper();
     }
     @Transactional
     public APIResponse<Object> saveAuction(AuctionRequestDto auctionRequestDto) {
@@ -255,6 +263,20 @@ public class AuctionServiceImpl implements AuctionService {
         } catch (Exception e) {
             log.error("Error fetching auctions with filters: {}", e.getMessage(), e);
             return createResponse("Error fetching auctions", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> deleteAuctionByProductId(Long productId) {
+        Optional<Auction> auction = auctionRepository.findAuctionByProductId(productId);
+
+        Boolean isBidPresent = bidingService.findByAuctionPresent(auction);
+
+        if (isBidPresent) {
+            return new ResponseEntity<>(BID_IS_PRESENT, HttpStatus.OK);
+        } else {
+            auction.ifPresent(auctionRepository::delete);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
     }
 

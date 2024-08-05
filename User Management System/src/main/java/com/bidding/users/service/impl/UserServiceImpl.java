@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import static com.bidding.users.constants.UserManagementConstants.*;
+
 import java.util.Date;
 import java.util.List;
 
@@ -48,7 +50,7 @@ public class UserServiceImpl implements UsersService {
             if (StringUtil.notNullNorEmpty(userRequestDto.getPassword())) {
                 user.setPassword(BCrypt.hashpw(userRequestDto.getPassword(), BCrypt.gensalt()));
             } else {
-                return createResponse("Bad Request Password Cannot Be Empty", HttpStatus.BAD_REQUEST);
+                return createResponse(EMPTY_PASSWORD, HttpStatus.BAD_REQUEST);
             }
             user.setCreatedAt(new Date());
             user.setUpdatedAt(new Date());
@@ -57,7 +59,7 @@ public class UserServiceImpl implements UsersService {
             return createResponse(mapper.convertValue(user, UserResponseDto.class), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error("Error creating user: {}", e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error creating user", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ERROR_CREATING_USER, e);
         }
     }
 
@@ -67,7 +69,7 @@ public class UserServiceImpl implements UsersService {
         try {
             log.info("Starting user update process for ID: {}", id);
             User user = usersRepository.findById(id)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, USER_NOT_FOUND));
 
             mapper.updateValue(user, userRequestDto);
 
@@ -79,7 +81,7 @@ public class UserServiceImpl implements UsersService {
             throw e;
         } catch (Exception e) {
             log.error("Error updating user with ID {}: {}", id, e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error updating user", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ERROR_UPDATING_USER, e);
         }
     }
 
@@ -88,7 +90,7 @@ public class UserServiceImpl implements UsersService {
         log.info("Fetching user by email: {}", email);
         try {
             User user = usersRepository.findByEmail(email)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, USER_NOT_FOUND));
 
             UserResponseDto userResponseDto = mapper.convertValue(user, UserResponseDto.class);
             return createResponse(userResponseDto, HttpStatus.OK);
@@ -97,10 +99,10 @@ public class UserServiceImpl implements UsersService {
             throw e;
         } catch (DataAccessException e) {
             log.error("Database error while fetching user by email: {}", email, e);
-            return createResponse("Error accessing the database", HttpStatus.INTERNAL_SERVER_ERROR);
+            return createResponse(ERROR_ACCESSING_DATABASE, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             log.error("Unexpected error while fetching user by email: {}", email, e);
-            return createResponse("Error while fetching user", HttpStatus.INTERNAL_SERVER_ERROR);
+            return createResponse(ERROR_FETCHING_USER, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -136,7 +138,7 @@ public class UserServiceImpl implements UsersService {
 
         } catch (Exception e) {
             log.error("Error fetching users with filters: {}", e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching users", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ERROR_FETCHING_USER, e);
         }
     }
 
@@ -145,7 +147,7 @@ public class UserServiceImpl implements UsersService {
             if (content instanceof String) {
                 throw new ResponseStatusException(status, (String) content);
             } else {
-                throw new ResponseStatusException(status, "Error");
+                throw new ResponseStatusException(status, ERROR);
             }
         }
         return APIResponse.builder()

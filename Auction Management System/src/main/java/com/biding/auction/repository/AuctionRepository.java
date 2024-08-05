@@ -30,7 +30,7 @@ public interface AuctionRepository extends JpaRepository<Auction, Long> {
 
     @Query(value = "SELECT * FROM auction a " +
             "WHERE a.bidding_end_time < :currentDate " +
-            "AND a.winner_id IS NULL",
+            "AND a.user_id IS NULL",
             nativeQuery = true)
     List<Auction> findAllByBiddingEndTimeBeforeAndWinnerIsNull(@Param("currentDate") Date currentDate);
 

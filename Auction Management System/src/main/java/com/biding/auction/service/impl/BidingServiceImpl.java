@@ -82,7 +82,7 @@ public class BidingServiceImpl implements BidingService {
     @Transactional
     public void determineAuctionWinner() {
         List<Auction> auctions = auctionRepository.findAllByBiddingEndTimeBeforeAndWinnerIsNull(new Date());
-
+        log.info("Auction details to fetch winner : "+auctions);
         for (Auction auction : auctions) {
             List<Bid> bids = bidRepository.findByAuctionId(auction.getId());
 
@@ -94,7 +94,6 @@ public class BidingServiceImpl implements BidingService {
             WinnerDeterminationContext context = new WinnerDeterminationContext(new HighestBidAmountEarliestFirstStrategy());
             Optional<Bid> winningBid = context.determineWinner(bids);
 
-
             if (winningBid.isPresent()) {
                 User winner = winningBid.get().getUser();
                 auction.setWinner(winner);
@@ -105,6 +104,11 @@ public class BidingServiceImpl implements BidingService {
                 log.error(" No Participants in Auction for auction id {} ", auction.getId());
             }
         }
+    }
+
+    @Override
+    public Boolean findByAuctionPresent(Optional<Auction> auction) {
+        return auction.map(value -> bidRepository.findByAuction(value).isPresent()).orElse(Boolean.FALSE);
     }
 
     private void sendNotification(User winner, Auction auction) {
