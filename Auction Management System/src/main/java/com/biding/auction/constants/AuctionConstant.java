@@ -19,4 +19,6 @@ public class AuctionConstant {
     public static final String ALPHABETIC = "ALPHABETIC";
     public static final String RANDOM = "RANDOM";
     public static final String INVALID_BIDING_STRATEGY = "Null Or Invalid Biding Strategy";
+    public static final String USER_NOT_FOUND = "User not found";
+    public static final String INVALID_BIDDING_PRICE = "Biding price is lessor than base price";
 }

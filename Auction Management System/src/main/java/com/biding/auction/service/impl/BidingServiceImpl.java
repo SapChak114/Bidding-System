@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.biding.auction.constants.AuctionConstant.*;
+import static com.biding.auction.constants.SQSConstants.SQS_QUEUE_NAME;
 
 @Service
 @Slf4j
@@ -55,16 +56,18 @@ public class BidingServiceImpl implements BidingService {
         this.restTemplate = new RestTemplate();
     }
 
-    @SqsListener(value = SQSConstants.SQS_QUEUE_NAME)
+    @SqsListener(value = SQS_QUEUE_NAME)
     public void receiveMessage(String message) {
         try {
             BidRequestDto bidRequestDto = mapper.readValue(message, BidRequestDto.class);
 
             User user = userRepository.findById(bidRequestDto.getUserId())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                    .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
             Auction auction = auctionRepository.findById(bidRequestDto.getAuctionId())
-                    .orElseThrow(() -> new RuntimeException("Auction not found"));
-
+                    .orElseThrow(() -> new RuntimeException(AUCTION_NOT_FOUND));
+            if (bidRequestDto.getAmount() < auction.getProduct().getBasePrice()) {
+                throw new RuntimeException(INVALID_BIDDING_PRICE);
+            }
             Bid bid = new Bid();
             bid.setUser(user);
             bid.setAuction(auction);
