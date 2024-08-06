@@ -18,18 +18,15 @@ public class HighestAmountRandomBidStrategy implements WinnerDeterminationStrate
             return Optional.empty();
         }
 
-        // Find the maximum bid amount
         double maxAmount = bids.stream()
                 .max(Comparator.comparing(Bid::getAmount))
                 .get()
                 .getAmount();
 
-        // Filter bids with the maximum bid amount
         List<Bid> maxBids = bids.stream()
                 .filter(bid -> bid.getAmount() == maxAmount)
                 .toList();
 
-        // If there's only one bid with the maximum amount, return it
         if (maxBids.size() == 1) {
             return Optional.of(maxBids.get(0));
         }
