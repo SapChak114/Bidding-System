@@ -1,8 +1,17 @@
 package com.biding.auction.util;
 
+import com.biding.auction.enums.BiddingStrategy;
+import com.biding.auction.winningStrategy.WinnerDeterminationStrategy;
+import com.biding.auction.winningStrategy.strategies.HighestAmountAlphabeticalUserNameStrategy;
+import com.biding.auction.winningStrategy.strategies.HighestAmountRandomBidStrategy;
+import com.biding.auction.winningStrategy.strategies.HighestBidAmountEarliestFirstStrategy;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+
+import static com.biding.auction.enums.BiddingStrategy.*;
 
 public class AuctionUtils {
 
@@ -15,4 +24,9 @@ public class AuctionUtils {
         }
         return null;
     }
+
+    public static final Map<BiddingStrategy, WinnerDeterminationStrategy> biddingStrategiesMap =
+            Map.of(EARLY_DATE, new HighestBidAmountEarliestFirstStrategy(),
+            ALPHABETIC, new HighestAmountAlphabeticalUserNameStrategy(),
+            RANDOM, new HighestAmountRandomBidStrategy());
 }

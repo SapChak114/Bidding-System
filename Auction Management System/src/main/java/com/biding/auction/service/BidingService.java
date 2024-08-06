@@ -7,7 +7,7 @@ import java.util.Optional;
 public interface BidingService {
     public void receiveMessage(String message);
 
-    public void determineAuctionWinner();
+    public void determineAuctionWinners();
 
     Boolean findByAuctionPresent(Optional<Auction> auction);
 }

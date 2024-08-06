@@ -86,7 +86,7 @@ public class BidingServiceImpl implements BidingService {
 
     @Override
     @Transactional
-    public void determineAuctionWinner() {
+    public void determineAuctionWinners() {
         List<Auction> auctions = auctionRepository.findAllByBiddingEndTimeBeforeAndWinnerIsNull(new Date());
         log.debug("Auction details to fetch winner : "+auctions);
         for (Auction auction : auctions) {

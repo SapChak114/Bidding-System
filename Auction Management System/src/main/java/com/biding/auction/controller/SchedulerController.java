@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 @Controller
 @Slf4j
 public class SchedulerController {
-    private BidingService bidingService;
+    private final BidingService bidingService;
 
     @Autowired
     public SchedulerController(BidingService bidingService) {
@@ -22,7 +22,7 @@ public class SchedulerController {
     public void findWinner() {
         log.info("Starting winner determination process");
         try {
-            bidingService.determineAuctionWinner();
+            bidingService.determineAuctionWinners();
         } catch (Exception e) {
             log.error("Error during winner determination process: {}", e.getMessage(), e);
         }

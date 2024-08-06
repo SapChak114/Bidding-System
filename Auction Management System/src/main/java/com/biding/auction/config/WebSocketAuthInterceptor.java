@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.biding.auction.constants.WebSocketConstants.AUTHORIZATION;
-import static com.biding.auction.constants.WebSocketConstants.CHECK_BASIC_AUTH;
+import static com.biding.auction.constants.WebSocketConstants.BASIC;
 
 @Component
 @Order(1)
@@ -37,7 +37,7 @@ public class WebSocketAuthInterceptor implements HandshakeInterceptor {
         }
         String authHeader = Objects.requireNonNull(request.getHeaders().get(AUTHORIZATION)).get(0);
 
-        if (!authHeader.startsWith(CHECK_BASIC_AUTH)) {
+        if (!authHeader.startsWith(BASIC)) {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return false;
         }

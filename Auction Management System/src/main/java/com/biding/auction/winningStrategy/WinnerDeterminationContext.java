@@ -6,21 +6,19 @@ import com.biding.auction.winningStrategy.strategies.HighestAmountAlphabeticalUs
 import com.biding.auction.winningStrategy.strategies.HighestAmountRandomBidStrategy;
 import com.biding.auction.winningStrategy.strategies.HighestBidAmountEarliestFirstStrategy;
 
+import static com.biding.auction.util.AuctionUtils.*;
+
 import java.util.List;
 import java.util.Optional;
 
-import static com.biding.auction.constants.AuctionConstant.INVALID_BIDING_STRATEGY;
+import static com.biding.auction.constants.AuctionConstant.*;
 
 public class WinnerDeterminationContext {
     private final WinnerDeterminationStrategy strategy;
 
-    public WinnerDeterminationContext(BiddingStrategy strategy) {
-        switch (strategy) {
-            case EARLY_DATE -> this.strategy = new HighestBidAmountEarliestFirstStrategy();
-            case RANDOM -> this.strategy = new HighestAmountRandomBidStrategy();
-            case ALPHABETIC -> this.strategy = new HighestAmountAlphabeticalUserNameStrategy();
-            default -> throw new RuntimeException(INVALID_BIDING_STRATEGY);
-        }
+    public WinnerDeterminationContext(BiddingStrategy strategyKey) {
+        strategy = biddingStrategiesMap.computeIfAbsent(strategyKey, key -> {
+            throw new RuntimeException(INVALID_BIDING_STRATEGY);});
     }
 
     public Optional<Bid> determineWinner(List<Bid> bids) {

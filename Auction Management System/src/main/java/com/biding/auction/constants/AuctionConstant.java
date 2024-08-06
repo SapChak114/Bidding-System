@@ -13,7 +13,7 @@ public class AuctionConstant {
     public static final String ERROR_FETCHING_AUCTION = "Error fetching auctions";
     public static final String ERROR = "Error";
     public static final String ASC = "asc";
-    public static final String a = "a";
+    public static final String ASCENDING = "a";
     public static final String NOTIFICATION_URL = "http://localhost:8083/notify/";
     public static final String EARLY_DATE = "EARLY_DATE";
     public static final String ALPHABETIC = "ALPHABETIC";

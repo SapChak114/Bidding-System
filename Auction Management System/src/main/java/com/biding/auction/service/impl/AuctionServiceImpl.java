@@ -200,7 +200,7 @@ public class AuctionServiceImpl implements AuctionService {
             log.info("Fetching auctions with filters: {}", paginationRequest);
 
             Pageable pageable = PageRequest.of(paginationRequest.getOffset() - 1, paginationRequest.getPageSize(),
-                    paginationRequest.getSort().toLowerCase().startsWith(a)
+                    paginationRequest.getSort().toLowerCase().startsWith(ASCENDING)
                             ? Sort.by(paginationRequest.getField()).ascending()
                             : Sort.by(paginationRequest.getField()).descending());
 
