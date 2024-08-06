@@ -1,6 +1,5 @@
 package com.biding.auction.service.impl;
 
-import com.biding.auction.constants.SQSConstants;
 import com.biding.auction.dao.Auction;
 import com.biding.auction.dao.Bid;
 import com.biding.auction.dao.User;
@@ -12,7 +11,6 @@ import com.biding.auction.repository.BidRepository;
 import com.biding.auction.repository.UserRepository;
 import com.biding.auction.service.BidingService;
 import com.biding.auction.winningStrategy.WinnerDeterminationContext;
-import com.biding.auction.winningStrategy.strategies.HighestBidAmountEarliestFirstStrategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.sqs.annotation.SqsListener;
 import lombok.extern.slf4j.Slf4j;
