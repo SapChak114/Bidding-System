@@ -6,6 +6,7 @@ import com.biding.auction.dao.Bid;
 import com.biding.auction.dao.User;
 import com.biding.auction.dto.request.BidRequestDto;
 import com.biding.auction.dto.request.NotificationRequestDto;
+import com.biding.auction.enums.BiddingStrategy;
 import com.biding.auction.repository.AuctionRepository;
 import com.biding.auction.repository.BidRepository;
 import com.biding.auction.repository.UserRepository;
@@ -83,7 +84,7 @@ public class BidingServiceImpl implements BidingService {
     @Transactional
     public void determineAuctionWinner() {
         List<Auction> auctions = auctionRepository.findAllByBiddingEndTimeBeforeAndWinnerIsNull(new Date());
-        log.info("Auction details to fetch winner : "+auctions);
+        log.debug("Auction details to fetch winner : "+auctions);
         for (Auction auction : auctions) {
             List<Bid> bids = bidRepository.findByAuctionId(auction.getId());
 
@@ -91,8 +92,8 @@ public class BidingServiceImpl implements BidingService {
                 log.info("No bids found for auction with ID: {}", auction.getId());
                 continue;
             }
-
-            WinnerDeterminationContext context = new WinnerDeterminationContext(new HighestBidAmountEarliestFirstStrategy());
+            BiddingStrategy strategy = auction.getBiddingStrategy();
+            WinnerDeterminationContext context = new WinnerDeterminationContext(strategy);
             Optional<Bid> winningBid = context.determineWinner(bids);
 
             if (winningBid.isPresent()) {

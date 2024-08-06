@@ -11,6 +11,7 @@ public class HighestAmountAlphabeticalUserNameStrategy implements WinnerDetermin
     @Override
     public Optional<Bid> determineWinner(List<Bid> bids) {
         return bids.stream()
-            .min(Comparator.comparing(bid -> bid.getUser().getName()));
+                .max(Comparator.comparing(Bid::getAmount)
+                        .thenComparing(bid -> bid.getUser().getName()));
     }
 }

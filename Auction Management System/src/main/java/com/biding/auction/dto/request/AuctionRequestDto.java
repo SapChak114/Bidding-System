@@ -1,8 +1,6 @@
 package com.biding.auction.dto.request;
 
-import com.biding.auction.enums.BiddingStrategy;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
