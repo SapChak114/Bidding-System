@@ -65,6 +65,7 @@ public class BidingServiceImpl implements BidingService {
                     .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
             Auction auction = auctionRepository.findById(bidRequestDto.getAuctionId())
                     .orElseThrow(() -> new RuntimeException(AUCTION_NOT_FOUND));
+
             if (bidRequestDto.getAmount() < auction.getProduct().getBasePrice()) {
                 throw new RuntimeException(INVALID_BIDDING_PRICE);
             }
