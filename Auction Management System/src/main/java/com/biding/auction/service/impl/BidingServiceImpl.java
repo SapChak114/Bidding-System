@@ -10,9 +10,11 @@ import com.biding.auction.repository.AuctionRepository;
 import com.biding.auction.repository.BidRepository;
 import com.biding.auction.repository.UserRepository;
 import com.biding.auction.service.BidingService;
+import com.biding.auction.service.NotificationService;
 import com.biding.auction.winningStrategy.WinnerDeterminationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.sqs.annotation.SqsListener;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -43,15 +45,15 @@ public class BidingServiceImpl implements BidingService {
 
     private final ObjectMapper mapper;
 
-    private final RestTemplate restTemplate;
+    private final NotificationService notificationService;
 
     @Autowired
-    public BidingServiceImpl(BidRepository bidRepository, AuctionRepository auctionRepository, UserRepository userRepository) {
+    public BidingServiceImpl(BidRepository bidRepository, AuctionRepository auctionRepository, UserRepository userRepository, NotificationService notificationService) {
         this.bidRepository = bidRepository;
         this.auctionRepository = auctionRepository;
         this.userRepository = userRepository;
         this.mapper = new ObjectMapper();
-        this.restTemplate = new RestTemplate();
+        this.notificationService = notificationService;
     }
 
     @SqsListener(value = SQS_QUEUE_NAME)
@@ -104,7 +106,7 @@ public class BidingServiceImpl implements BidingService {
                 auction.setWinner(winner);
                 auction = auctionRepository.save(auction);
                 log.debug("Updated auction {}",auction);
-                sendNotification(winner, auction);
+                notificationService.sendNotification(winner, auction);
             } else {
                 log.error(" No Participants in Auction for auction id {} ", auction.getId());
             }
@@ -116,27 +118,4 @@ public class BidingServiceImpl implements BidingService {
         return auction.map(value -> bidRepository.findByAuction(value).isPresent()).orElse(Boolean.FALSE);
     }
 
-    public void sendNotification(User winner, Auction auction) {
-        NotificationRequestDto notificationRequestDto = NotificationRequestDto.builder()
-                                                        .userName(winner.getName())
-                                                        .userEmail(winner.getEmail())
-                                                        .userContact(winner.getContact())
-                                                        .productName(auction.getProduct().getName())
-                                                        .auctionId(auction.getId())
-                                                        .build();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-
-        HttpEntity<NotificationRequestDto> request = new HttpEntity<>(notificationRequestDto, headers);
-
-        try {
-            ResponseEntity<?> response = restTemplate.exchange(
-                    NOTIFICATION_URL,
-                    HttpMethod.POST,
-                    request,
-                    String.class);
-        } catch (Exception e) {
-            log.error("Exception while calling notification service : {} ",e.getMessage());
-        }
-    }
 }

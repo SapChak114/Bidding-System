@@ -25,8 +25,4 @@ public class AuctionUtils {
         return null;
     }
 
-    public static final Map<BiddingStrategy, WinnerDeterminationStrategy> biddingStrategiesMap =
-            Map.of(EARLY_DATE, new HighestBidAmountEarliestFirstStrategy(),
-            ALPHABETIC, new HighestAmountAlphabeticalUserNameStrategy(),
-            RANDOM, new HighestAmountRandomBidStrategy());
 }
