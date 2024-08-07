@@ -81,7 +81,6 @@ public class AuctionController {
 
         return ResponseEntity.status(resp.getStatusCode()).body(resp);
     }
-    //TODO : Find Auctions which are currently in bid and which will start to bid -> currentTime < biddingEndTime
 
     @GetMapping("/liveORUpcoming")
     public ResponseEntity<APIResponse<Object>> getAllOnGoingAuctions() {
