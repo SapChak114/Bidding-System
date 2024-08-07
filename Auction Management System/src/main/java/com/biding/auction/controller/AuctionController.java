@@ -103,6 +103,4 @@ public class AuctionController {
 
         return ResponseEntity.status(resp.getStatusCode()).body(resp);
     }
-
-    //TODO: Given user id return the list of auctions where the user has won
 }
