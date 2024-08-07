@@ -81,7 +81,13 @@ public class AuctionController {
 
         return ResponseEntity.status(resp.getStatusCode()).body(resp);
     }
+    //TODO : Find Auctions which are currently in bid and which will start to bid -> currentTime < biddingEndTime
 
+    @GetMapping("/liveORUpcoming")
+    public ResponseEntity<APIResponse<Object>> getAllOnGoingAuctions() {
+        APIResponse<Object> resp = auctionService.getAllOnGoingAuctions();
+        return ResponseEntity.status(resp.getStatusCode()).body(resp);
+    }
     @GetMapping("/with-winner")
     public ResponseEntity<APIResponse<Object>> getAuctionsWithWinner(
             @RequestParam("offset") int offset,
@@ -99,4 +105,5 @@ public class AuctionController {
         return ResponseEntity.status(resp.getStatusCode()).body(resp);
     }
 
+    //TODO: Given user id return the list of auctions where the user has won
 }

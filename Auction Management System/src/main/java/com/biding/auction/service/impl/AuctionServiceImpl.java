@@ -279,6 +279,19 @@ public class AuctionServiceImpl implements AuctionService {
         }
     }
 
+    @Override
+    public APIResponse<Object> getAllOnGoingAuctions() {
+        try {
+            Optional<List<Auction>> liveAuctions = auctionRepository.getAllLiveAuctions(new Date());
+            if (liveAuctions.isEmpty()) {
+                return createResponse(ERROR_FETCHING_AUCTION, HttpStatus.BAD_REQUEST);
+            }
+            return createResponse(liveAuctions.get(), HttpStatus.OK);
+        } catch (Exception e) {
+            return createResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     private APIResponse<Object> createResponse(Object content, HttpStatus status) {
         if (status.is4xxClientError() || status.is5xxServerError()) {
             if (content instanceof String) {

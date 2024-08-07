@@ -20,4 +20,6 @@ public interface AuctionService {
     APIResponse<Object> getAuctionsWithWinner(PaginationRequest paginationRequest);
 
     ResponseEntity<?> deleteAuctionByProductId(Long productId);
+
+    APIResponse<Object> getAllOnGoingAuctions();
 }
